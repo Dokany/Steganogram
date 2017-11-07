@@ -6,7 +6,7 @@ class Client
 {
 private:
     UDPSocket *udpSocket;
-    
+
 public:
     Client();
     char * execute(char * _message, int server_port, char *hostname, char *server_host);

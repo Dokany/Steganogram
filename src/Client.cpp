@@ -3,6 +3,7 @@
 #include <cstring>
 #include <iostream>
 using namespace std;
+
 Client::Client()
 {
 	udpSocket = new UDPSocket();
