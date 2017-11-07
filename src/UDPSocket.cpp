@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stddef.h>
 #include <stdio.h>
+
 using namespace std;
 
 UDPSocket::UDPSocket (){}
@@ -133,6 +134,7 @@ int UDPSocket::writeToSocketAndWait (char * buffer,  int maxBytes, int server_po
 
 int UDPSocket::readFromSocketWithNoBlock (char message1[2048], int  maxBytes)
 {
+    std::lock_guard<std::mutex> lock_m(m);
 	memset(message1, '\0', 2048);
 
     int ret = recvfrom(sock, message1, maxBytes, 0, (struct sockaddr *)&myAddr, &aLength);

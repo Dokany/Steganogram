@@ -15,19 +15,19 @@ int main()
 
 	char* client_hostname = "10.7.57.200";
 
-	Peer client;
+	Peer client(NULL, 0);
 
 	while (true)
 	{
-		char* msg = new char[2048];
-		memset(msg, '\0', strlen(msg));
+		// char* msg = new char[2048];
+		// memset(msg, '\0', strlen(msg));
 
-		cout << "Enter new message: ";
-		cin >> msg;
+		// cout << "Enter new message: ";
+		// cin >> msg;
 
-		client.execute(msg, 4444, client_hostname, server_hostname);
+		client.execute("Hiiiii", 4444, client_hostname, server_hostname);
 
-		delete [] msg;
+		//delete [] msg;
 	}
 
 	return 0;

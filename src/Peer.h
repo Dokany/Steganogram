@@ -1,7 +1,5 @@
 #include "Message.h"
 #include "UDPSocket.h"
-#include "Client.h"
-#include "Server.h"
 
 #ifndef PEER_H
 #define PEER_H
@@ -9,7 +7,8 @@
 class Peer
 {
     private:
-        UDPSocket * udpSocket_client, udpsocket_server;
+        UDPSocket * udpSocket_client;
+        UDPSocket * udpSocket_server;
         bool getRequest();
         void sendReply (char *_message, int client_port, char* client_hostname);        
 

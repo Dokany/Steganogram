@@ -8,12 +8,14 @@
 #include <stdio.h>
 #include <string>
 #include <cstdio>
+#include <thread>
+#include <mutex>
 using namespace std;
 
 Peer::Peer(char * _listen_hostname, int _listen_port)
 {
-    udpSocket_server = new UDPSocket();
-    udpSocket_client = new UDPSocket();
+    this->udpSocket_server = new UDPSocket();
+    this->udpSocket_client = new UDPSocket();
 
     udpSocket_server->initializeServer(_listen_hostname, _listen_port);
 	udpSocket_client->initializeClient();
