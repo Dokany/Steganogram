@@ -17,7 +17,8 @@ int main()
 
 	Peer client(NULL, 0);
 
-	while (true)
+    //while (true)
+    for (int i = 0; i < 10; ++i)
 	{
 		// char* msg = new char[2048];
 		// memset(msg, '\0', strlen(msg));
