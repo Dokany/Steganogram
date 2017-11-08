@@ -1,5 +1,8 @@
 #include "Message.h"
 #include "UDPSocket.h"
+#include <thread>
+#include <vector>
+#include <queue>
 
 #ifndef PEER_H
 #define PEER_H
@@ -9,6 +12,10 @@ class Peer
     private:
         UDPSocket * udpSocket_client;
         UDPSocket * udpSocket_server;
+        
+        std::vector<std::thread> processes;
+        std::queue<char*> requests;
+
         bool getRequest();
         void sendReply (char *_message, int client_port, char* client_hostname);        
 

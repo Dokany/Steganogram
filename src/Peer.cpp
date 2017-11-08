@@ -8,18 +8,37 @@
 #include <stdio.h>
 #include <string>
 #include <cstdio>
-#include <thread>
 #include <mutex>
+#include <chrono>
 using namespace std;
 
 Peer::Peer(char * _listen_hostname, int _listen_port)
 {
+	bool flag = false;
+
     this->udpSocket_server = new UDPSocket();
     this->udpSocket_client = new UDPSocket();
 
     udpSocket_server->initializeServer(_listen_hostname, _listen_port);
 	udpSocket_client->initializeClient();
+
+	for (int i = 0; i < 5; ++i)
+	{
+		processes.push_back(std:: thread([&](){
+			while(flag && !requests.empty()) 
+			{
+				cout << std::this_thread::get_id() << " : " << requests.front() << endl;
+				requests.pop();	
+			}
+		}
+			));
+	}
+
+	flag = true;
+
+	//for (std:: thread &t: processes) t.join();
 }
+
 
 bool Peer::getRequest()
 {
@@ -32,6 +51,7 @@ bool Peer::getRequest()
 	char* client_hostname = new char[15];
 
 	memset(message1, 0, 2048);
+
 	if((rr = udpSocket_server->readFromSocketWithNoBlock(message1 , 2048) )< 0)
 	{
 		printf("Message not recieved.\n");
@@ -56,6 +76,8 @@ bool Peer::getRequest()
 		cout << "Client Port no.: " << client_port << endl;
 		cout << "Client IP Address: " << client_hostname << endl;
 
+		requests.push(message1);
+
 		sendReply(message1, client_port, client_hostname);
 
 		if(message1[0] == 'q')
@@ -68,7 +90,6 @@ bool Peer::getRequest()
 			return true;
 		}
 		else return false;
-
 	}
 }
 
