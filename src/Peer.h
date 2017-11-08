@@ -1,6 +1,7 @@
 #include "Message.h"
 #include "UDPSocket.h"
 #include <thread>
+#include <mutex>
 #include <vector>
 #include <queue>
 
@@ -12,7 +13,11 @@ class Peer
     private:
         UDPSocket * udpSocket_client;
         UDPSocket * udpSocket_server;
-        
+
+        bool notify = false;
+
+      	std::mutex request_in, request_process;
+
         std::vector<std::thread> processes;
         std::queue<char*> requests;
 

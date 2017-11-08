@@ -26,20 +26,17 @@ Peer::Peer(char * _listen_hostname, int _listen_port)
 	{
 		processes.push_back(std:: thread([&](){
 
-			while(flag) 
+			while(notify) 
 			{
+				request_process.lock();
 				cout << std::this_thread::get_id() << " : " << requests.front() << endl;
 				requests.pop();
-				std::this_thread::sleep_for(std::chrono::seconds(10000));	
+				std::this_thread::sleep_for(std::chrono::seconds(10000));
+				notify = false;	
+				request_process.unlock();
 			}
-		}
-			));
+		}));
 	}
-
-	flag = true;
-
-	for (std:: thread &t: processes) t.join();
-
 }
 
 
@@ -79,7 +76,10 @@ bool Peer::getRequest()
 		cout << "Client Port no.: " << client_port << endl;
 		cout << "Client IP Address: " << client_hostname << endl;
 
+		request_in.lock();
+		notify = true;
 		requests.push(message1);
+		request_in.unlock();
 
 		sendReply(message1, client_port, client_hostname);
 
