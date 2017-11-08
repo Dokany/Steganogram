@@ -25,10 +25,12 @@ Peer::Peer(char * _listen_hostname, int _listen_port)
 	for (int i = 0; i < 5; ++i)
 	{
 		processes.push_back(std:: thread([&](){
-			while(flag && !requests.empty()) 
+
+			while(flag) 
 			{
 				cout << std::this_thread::get_id() << " : " << requests.front() << endl;
-				requests.pop();	
+				requests.pop();
+				std::this_thread::sleep_for(std::chrono::seconds(10000));	
 			}
 		}
 			));
@@ -36,7 +38,8 @@ Peer::Peer(char * _listen_hostname, int _listen_port)
 
 	flag = true;
 
-	//for (std:: thread &t: processes) t.join();
+	for (std:: thread &t: processes) t.join();
+
 }
 
 
