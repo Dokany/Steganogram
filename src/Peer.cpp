@@ -8,16 +8,37 @@
 #include <stdio.h>
 #include <string>
 #include <cstdio>
+#include <mutex>
+#include <chrono>
 using namespace std;
 
 Peer::Peer(char * _listen_hostname, int _listen_port)
 {
-    udpSocket_server = new UDPSocket();
-    udpSocket_client = new UDPSocket();
+	bool flag = false;
+
+    this->udpSocket_server = new UDPSocket();
+    this->udpSocket_client = new UDPSocket();
 
     udpSocket_server->initializeServer(_listen_hostname, _listen_port);
 	udpSocket_client->initializeClient();
+
+	for (int i = 0; i < 5; ++i)
+	{
+		processes.push_back(std:: thread([&](){
+
+		while (true) {
+			std::unique_lock<std::mutex> lck (mutex_);
+			cond.wait(lck);		// release lck and waits
+			cout << std::this_thread::get_id() << " : " << requests.front() << endl;
+			requests.pop();
+			//std::this_thread::sleep_for(std::chrono::seconds(10));
+			lck.unlock();		// release lck
+		}
+
+		}));
+	}
 }
+
 
 bool Peer::getRequest()
 {
@@ -30,6 +51,7 @@ bool Peer::getRequest()
 	char* client_hostname = new char[15];
 
 	memset(message1, 0, 2048);
+
 	if((rr = udpSocket_server->readFromSocketWithNoBlock(message1 , 2048) )< 0)
 	{
 		printf("Message not recieved.\n");
@@ -54,6 +76,12 @@ bool Peer::getRequest()
 		cout << "Client Port no.: " << client_port << endl;
 		cout << "Client IP Address: " << client_hostname << endl;
 
+
+		// Mutex Thread Handling
+		std::unique_lock<std::mutex> lck (mutex_);
+		requests.push(message1);
+		cond.notify_one();		// release lock
+
 		sendReply(message1, client_port, client_hostname);
 
 		if(message1[0] == 'q')
@@ -66,7 +94,6 @@ bool Peer::getRequest()
 			return true;
 		}
 		else return false;
-
 	}
 }
 
@@ -114,4 +141,6 @@ bool Peer::listen()
 	return getRequest();
 }
 
-Peer::~Peer(){}
+Peer::~Peer(){
+	for (std::thread &t : processes) t.join();
+}

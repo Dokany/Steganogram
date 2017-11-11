@@ -8,13 +8,15 @@
 #include <netdb.h>
 #include <ctime>
 #include <netinet/in.h>
+#include <mutex>
 
 #ifndef UDPSOCKET_H
 #define UDPSOCKET_H
 
 class UDPSocket
 {
-    protected:
+    private:
+        std::mutex m; 
         const size_t MAX_SIZE_MSG = 2048;
         int sock;
         socklen_t aLength;

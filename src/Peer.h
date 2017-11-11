@@ -1,7 +1,10 @@
 #include "Message.h"
 #include "UDPSocket.h"
-#include "Client.h"
-#include "Server.h"
+#include <thread>
+#include <mutex>
+#include <vector>
+#include <queue>
+#include <condition_variable>
 
 #ifndef PEER_H
 #define PEER_H
@@ -9,7 +12,15 @@
 class Peer
 {
     private:
-        UDPSocket * udpSocket_client, udpsocket_server;
+        UDPSocket * udpSocket_client;
+        UDPSocket * udpSocket_server;
+
+      	std::mutex mutex_;
+        std::condition_variable cond;
+
+        std::vector<std::thread> processes;
+        std::queue<char*> requests;
+
         bool getRequest();
         void sendReply (char *_message, int client_port, char* client_hostname);        
 
