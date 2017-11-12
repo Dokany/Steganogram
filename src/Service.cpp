@@ -1,4 +1,4 @@
-#include "Peer.h"
+#include "Service.h"
 #include <iostream>
 #include <unistd.h>
 #include <cstring>
@@ -7,18 +7,13 @@
 #include <stdlib.h>  
 #include <stdio.h>
 #include <string>
-#include <cstdio>
-#include <mutex>
-#include <chrono>
 using namespace std;
 
-Peer::Peer(char * _listen_hostname, int _listen_port)
+Service:: Service(char * _listen_hostname, int _listen_port)
 {
-    this->udpSocket_server = new UDPSocket();
-    this->udpSocket_client = new UDPSocket();
+	this->udpSocket = new UDPSocket();
 
-    udpSocket_server->initializeServer(_listen_hostname, _listen_port);
-	udpSocket_client->initializeClient();
+	udpSocket->initializeServer(_listen_hostname, _listen_port);
 
 	for (int i = 0; i < 5; ++i)
 	{
@@ -35,10 +30,26 @@ Peer::Peer(char * _listen_hostname, int _listen_port)
 
 		}));
 	}
+
+	long unsigned int str_username;
+	long unsigned int str_password;
+	inputFile.open("auth.txt");
+
+	if (inputFile.is_open())
+	{
+		while (!inputFile.eof())
+		{
+			inputFile >> str_username >> str_password;
+			user_directory[str_username].first = str_password;
+			user_directory[str_username].second = false;
+		}
+	}
+
+	else cout << "Unable to open file\n";
+
 }
 
-
-bool Peer::getRequest()
+bool Service::getRequest()
 {
 	char * buffer;
 	char message1[2048];
@@ -49,8 +60,7 @@ bool Peer::getRequest()
 	char* client_hostname = new char[15];
 
 	memset(message1, 0, 2048);
-
-	if((rr = udpSocket_server->readFromSocketWithNoBlock(message1 , 2048) )< 0)
+	if((rr = udpSocket->readFromSocketWithNoBlock(message1 , 2048) )< 0)
 	{
 		printf("Message not recieved.\n");
 	}
@@ -74,7 +84,6 @@ bool Peer::getRequest()
 		cout << "Client Port no.: " << client_port << endl;
 		cout << "Client IP Address: " << client_hostname << endl;
 
-
 		// Mutex Thread Handling
 		std::unique_lock<std::mutex> lck (mutex_);
 		requests.push(message1);
@@ -92,10 +101,11 @@ bool Peer::getRequest()
 			return true;
 		}
 		else return false;
+
 	}
 }
 
-void Peer::sendReply (char *_message, int client_port, char *client_hostname)
+void Service::sendReply (char *_message, int client_port, char *client_hostname)
 {
 	char* ack;
 
@@ -104,41 +114,32 @@ void Peer::sendReply (char *_message, int client_port, char *client_hostname)
 		cout << _message[i];
 
 	cout << '\n';
-	int n = udpSocket_server->writeToSocket(_message, 2048, client_port, client_hostname);
+	int n = udpSocket->writeToSocket(_message, 2048, client_port, client_hostname);
  }
 
- char * Peer::execute(char * message, int server_port, char *hostname, char *server_host)
- {
-     const int SIZE = 2048;
-     char *ack;
- 
-     char* message_ = new char[SIZE];
-     memset(message_, '\0', 2048);
-     string s = to_string(udpSocket_client->getMyPort());
-     const char *port = s.c_str();
- 
-     for(int i =0; i < strlen(message); i++)
-     {
-         message_[i] = message[i];
-     }
- 
-     sprintf(message_ + 2043, port); //store port
- 
-     sprintf(message_ + 2027, hostname);	//store ip
- 
-     int n = udpSocket_client->writeToSocketAndWait (message_, 2048, server_port, server_host, 1000 , ack);
- 
-     if (n > 0) 
-         return message_;
-     else 
-         return "No Acknowledgement Recieved\n";
- }
 
-bool Peer::listen()
+bool Service::listen()
 {
 	return getRequest();
 }
 
-Peer::~Peer(){
+void Service::authenticate(string username, string password)
+{
+	auto search = user_directory.find(str_hash(username));
+
+	if(search != user_directory.end()) 
+	{	
+		//username exists
+		if (user_directory[str_hash(username)].first == str_hash(password))
+
+			cout << "Redirecting..\n";
+
+		else cout << "Incorrect Password\n";
+	}
+
+	else cout << "Username does not exist\n";
+}
+
+Service::~Service(){
 	for (std::thread &t : processes) t.join();
 }

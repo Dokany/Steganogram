@@ -14,6 +14,22 @@ Server::Server(char * _listen_hostname, int _listen_port)
 	this->udpSocket = new UDPSocket();
 
 	udpSocket->initializeServer(_listen_hostname, _listen_port);
+
+	for (int i = 0; i < 5; ++i)
+	{
+		processes.push_back(std:: thread([&](){
+
+		while (true) {
+			std::unique_lock<std::mutex> lck (mutex_);
+			cond.wait(lck);		// release lck and waits
+			cout << std::this_thread::get_id() << " : " << requests.front() << endl;
+			requests.pop();
+			//std::this_thread::sleep_for(std::chrono::seconds(10));
+			lck.unlock();		// release lck
+		}
+
+		}));
+	}
 }
 
 bool Server::getRequest()
@@ -51,6 +67,11 @@ bool Server::getRequest()
 		cout << "Client Port no.: " << client_port << endl;
 		cout << "Client IP Address: " << client_hostname << endl;
 
+		// Mutex Thread Handling
+		std::unique_lock<std::mutex> lck (mutex_);
+		requests.push(message1);
+		cond.notify_one();		// release lock
+
 		sendReply(message1, client_port, client_hostname);
 
 		if(message1[0] == 'q')
@@ -85,4 +106,6 @@ bool Server::listen()
 	return getRequest();
 }
 
-Server::~Server(){}
+Server::~Server(){
+	for (std::thread &t : processes) t.join();
+}
