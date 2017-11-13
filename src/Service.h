@@ -10,6 +10,7 @@
 #include <vector>
 #include <queue>
 #include <condition_variable>
+#include <ctime>
 using namespace std;
 
 #ifndef SERVICE_H
@@ -34,11 +35,14 @@ private:
 	ifstream inputFile;
 	hash<string> str_hash;
 	map<long unsigned int, pair<long unsigned int, bool>> user_directory;
+	map<string, time_t> online_directory;
 
 public:
 
 	Service(char * _listen_hostname, int _listen_port);
 	void authenticate(string username, string password);
+	void pingHandler(string IP, time_t current_time);
+	void pingRefresh();
 	bool listen();
 	~Service();
 };

@@ -132,12 +132,42 @@ void Service::authenticate(string username, string password)
 		//username exists
 		if (user_directory[str_hash(username)].first == str_hash(password))
 
+		{
 			cout << "Redirecting..\n";
+			online_directory[username] = time(NULL);
+		}
 
 		else cout << "Incorrect Password\n";
 	}
 
 	else cout << "Username does not exist\n";
+}
+
+void Service::pingHandler(string username, time_t current_time)
+{
+	auto search = online_directory.find(username);
+
+	if(search != online_directory.end())
+		//username online
+		search->second = current_time;
+}
+
+void Service::pingRefresh()
+{
+	thread t([&](){
+	    cout << "ping thread\n";
+
+	    time_t current_time;
+	    time(&current_time);
+
+	    for (auto &a : online_directory) 
+			{
+				if (abs(a.second - current_time) > 600)
+					online_directory.erase(a.first);
+			}
+    });
+
+    t.join();
 }
 
 Service::~Service(){
