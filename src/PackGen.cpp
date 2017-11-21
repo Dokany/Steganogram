@@ -90,7 +90,6 @@ Message PackGen::defragment(vector<Message> vm)
 	mm.setFlattenedData(fullData);
 	mm.setDataSize(total_data_size);
 	mm.setSeg(1,1);
-	mm.Flatten();
 	return mm;
 }
 PackGen::~PackGen(){}
