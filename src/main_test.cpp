@@ -22,7 +22,7 @@ void sendMsg(Message& msg)
 int main()
 {
 	Message msg(ImageReply, "10.7.57.249", 4444, "10.7.57.200", 4444);	
-	ImageData img("dog_s.jpg","dog_s.jpg" );
+	ImageData img("dog_b.jpg","dog_b.jpg" );
 	msg.setData(img);
 	msg.Flatten();
 	msg.printMessageDetails();
@@ -33,7 +33,7 @@ int main()
 
 	// synchronize threads
  	t1.join();
- 	this_thread::sleep_for (std::chrono::seconds(10));
+ 	this_thread::sleep_for (std::chrono::seconds(200));
  	
 	// cout << "Threads completed.\n";
 	

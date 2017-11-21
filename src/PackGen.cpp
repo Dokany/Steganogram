@@ -7,6 +7,7 @@ PackGen::PackGen(int max_size){
 vector<Message> PackGen::fragment(Message m)
 {
 	vector<Message> tmp;
+	m.Flatten();
 	if(m.getDataSize()<=max_size)
 	{
 		m.setSeg(1,1);
@@ -76,6 +77,7 @@ Message PackGen::defragment(vector<Message> vm)
 	for(Message m:vm)
 	{
 		fullData+=m.getData();
+
 		total_data_size += m.getDataSize();
 	}
 	Message mm;
@@ -88,6 +90,7 @@ Message PackGen::defragment(vector<Message> vm)
 	mm.setFlattenedData(fullData);
 	mm.setDataSize(total_data_size);
 	mm.setSeg(1,1);
+	mm.Flatten();
 	return mm;
 }
 PackGen::~PackGen(){}

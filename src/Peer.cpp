@@ -102,6 +102,7 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 			cout<<" sending: "<< ii++<<endl;
 			for(Message mm:msgs)
 			{
+				mm.Flatten();
 				string temp = mm.getFlattenedMessage();
 				char *cstr = new char[temp.length() + 1];
 				strcpy(cstr, temp.c_str());
@@ -222,6 +223,7 @@ void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
 	vector<Message> v = pg.fragment(m);
 	for(Message mm:v)
 	{
+		mm.Flatten();
 		string temp = mm.getFlattenedMessage();
 		char *msg = new char[temp.length() + 1];
 		strcpy(msg, temp.c_str());
@@ -269,7 +271,7 @@ void Peer::receiveHandler(int message_id, int timeout)
 		//defragment
 		PackGen pg(max_size);
 		Message defraggedMessage = pg.defragment(segmentTable[message_id]);
-
+		
 		//send ack
 		MessageType mmt = defraggedMessage.getType();
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
