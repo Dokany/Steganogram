@@ -252,6 +252,8 @@ void Peer::receiveHandler(int message_id, int timeout)
 	{
 		//if not send a neg ack
 		Message neg(NegAck, myIP,myPort,targetIP, targetPort);
+		AckData nd(_NegAck, segmentTable[message_id].back().getID());
+		neg.setData(nd);
 		neg.Flatten();
 		char *hn = new char[targetIP.length() + 1];
 		strcpy(hn, targetIP.c_str());
@@ -272,7 +274,11 @@ void Peer::receiveHandler(int message_id, int timeout)
 		MessageType mmt = defraggedMessage.getType();
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
 		{
+			
 			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
+			AckData ad(_Ack, segmentTable[message_id].back().getID());
+			ackMessage.setData(ad);
+			ackMessage.Flatten();
 			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
 			strcpy(hn, targetIP.c_str());
