@@ -61,7 +61,7 @@ void Peer::sendMain()
 				{
 					Message msg = requests.front();
 					char *IP = new char[msg.getTargetIP().length() + 1];
-					strcpy(IP, msg.getOwnerIP().c_str());
+					strcpy(IP, msg.getTargetIP().c_str());
 					cout << std::this_thread::get_id() << "\t Sending message to IP: " << msg.getTargetIP() <<" : "<<msg.getTargetPort() << endl;
 					//cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
 					sendHandler(msg, msg.getTargetPort(), IP, 7);
@@ -251,9 +251,9 @@ void Peer::receiveHandler(int message_id, int timeout)
 		//if not send a neg ack
 		Message neg(NegAck, myIP,myPort,targetIP, targetPort);
 
-		char *hn = new char[myIP.length() + 1];
-		strcpy(hn, myIP.c_str());
-		sendWithoutWaiting(neg,myPort,hn);
+		char *hn = new char[targetIP.length() + 1];
+		strcpy(hn, targetIP.c_str());
+		sendWithoutWaiting(neg,targetPort,hn);
 
 	}
 	else 	
@@ -271,9 +271,9 @@ void Peer::receiveHandler(int message_id, int timeout)
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
 		{
 			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-			char *hn = new char[myIP.length() + 1];
-			strcpy(hn, myIP.c_str());
-			sendWithoutWaiting(ackMessage,myPort,hn);
+			char *hn = new char[targetIP.length() + 1];
+			strcpy(hn, targetIP.c_str());
+			sendWithoutWaiting(ackMessage,targetPort,hn);
 		}	
 
 
