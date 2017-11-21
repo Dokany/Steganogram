@@ -51,7 +51,7 @@ vector<Message> PackGen::fragment(Message m)
 			string partialData = fullData.substr(start,mx);
 			//cout<<partialData.size()<<endl;
 			mm.setFlattenedData(partialData);
-			mm.Flatten();
+			//mm.Flatten();
 			start+=max_size;
 
 			tmp.push_back(mm);
@@ -87,7 +87,7 @@ Message PackGen::defragment(vector<Message> vm)
 	int total_data_size = 0;
 	for(Message m:vm)
 	{
-
+		m.Flatten();
 		string cur = m.getData();
 		fullData+=cur;
 		total_data_size += m.getDataSize();
