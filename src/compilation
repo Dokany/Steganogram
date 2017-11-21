@@ -1,0 +1,1 @@
+g++ -std=c++11 Data.h Data.cpp AuthData.h AuthData.cpp ImageListData.h ImageListData.cpp ImageRequestData.h ImageRequestData.cpp Message.h Message.cpp PackGen.h PackGen.cpp StatusData.h StatusData.cpp test.cpp -o test2 

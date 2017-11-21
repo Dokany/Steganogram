@@ -1,37 +1,64 @@
-#include<stdint.h>
-#include<cstdio> 
+#include <stdint.h>
+#include <cstdio> 
+#include "AuthData.h"
+#include "ImageListData.h"
+#include "AckData.h"
+#include "StatusData.h"
+#include "ImageRequestData.h"
+#include "ImageData.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <fstream>
 #include <netinet/in.h>
 
 using namespace std;
 #ifndef MESSAGE_H
 #define MESSAGE_H
-enum MessageType { Request, Reply};
+enum MessageType {  Ping, Auth, StatusReply, ImageListReply, 
+                    ImageReply, Ack, NegAck, StatusRequest, ImageListRequest,
+                    ViewsRequest, DenyRequest, ImageRequest, ViewsReply, Terminate}; 
+
 class Message
 {
     private:
-        MessageType message_type;
-        void * message;
-        size_t message_size;
-        static int message_count;
-        int message_id;
-        struct sockaddr_in sender;
+        int messageID, seg_num, seg_tot, size, ownerPort;
+        MessageType type;
+        string data, ownerIP, flattened;
+        static int all_ID;
+        const char seperator = ' ';
 
     public:
+        Message();
+        Message(const Message& other);
+        Message& operator=(const Message& other);
+    	Message(MessageType type, string IP, int Port);
+        int getID();
+        MessageType getType();
+    	bool setData(Data &d);
+    	void setSeg(int total, int current);
 
-        Message(void * p_message, size_t p_message_size, struct sockaddr_in sender, MessageType type);
+    	string getData();
+    	int getSegNum();
+    	int getSegTot();
+    	int getOwnerPort();
+    	string getOwnerIP();
+    	int getDataSize();
 
-        struct sockaddr_in getSenderAddress();
-        int getMessageID ();
+        void setFlattenedData(string s);
 
-        void * getMessage();
-        size_t getMessageSize();
-        MessageType getMessageType();
+        void setMessageID(int num);
+        void setPort(int num);
+        void setIP(string s);
+        void setType(MessageType mt);
+        void setDataSize(int i);
+        
+        bool Flatten();
+        bool unFlatten(string s);
+        string getFlattenedMessage();
 
-        void setMessage (void *message,  size_t message_size);
-        void setMessageType (MessageType message_type);
-        ~Message();
+        void printMessageDetails();
+
+    	~Message();
 };
 #endif //MESSAGE_H

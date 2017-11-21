@@ -9,6 +9,7 @@
 #include <ctime>
 #include <netinet/in.h>
 #include <mutex>
+#include <fcntl.h>
 
 #ifndef UDPSOCKET_H
 #define UDPSOCKET_H
@@ -17,11 +18,10 @@ class UDPSocket
 {
     private:
         std::mutex m; 
-        const size_t MAX_SIZE_MSG = 2048;
+        const size_t max_size = 50000;
         int sock;
         socklen_t aLength;
         struct sockaddr_in myAddr;
-
     public:
 
         UDPSocket ();

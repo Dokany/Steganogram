@@ -12,13 +12,16 @@
 
 using namespace std;
 
-UDPSocket::UDPSocket (){}
+UDPSocket::UDPSocket (){
+    
+}
 
 
 bool UDPSocket::initializeServer (char * hostname, int _myPort)
 {
     if((this->sock = socket(AF_INET, SOCK_DGRAM, 0))<0)
     {
+        
         perror("socket  failed");
         return false;
     }
@@ -32,6 +35,7 @@ bool UDPSocket::initializeServer (char * hostname, int _myPort)
     }
     aLength = sizeof(myAddr);
     this->myAddr.sin_family = AF_INET; /* note that this is needed */
+    fcntl(sock, F_SETFL, O_NONBLOCK);
 }
 
 bool UDPSocket::initializeClient ()
@@ -48,7 +52,8 @@ bool UDPSocket::initializeClient ()
         perror("Bind  failed\n");
         close (sock);
         return false;
-    }   
+    }
+     fcntl(sock, F_SETFL, O_NONBLOCK);   
 }
 
 int UDPSocket::getMyPort ()
@@ -93,15 +98,15 @@ int UDPSocket::writeToSocket (char * buffer,  int maxBytes, int server_port, cha
 
     makeDestSA(&peerAddr, hostname, server_port);
 
-    return sendto(sock, buffer, 2048, 0, (struct sockaddr *)&peerAddr, sizeof(peerAddr));
+    return sendto(sock, buffer, max_size, 0, (struct sockaddr *)&peerAddr, sizeof(peerAddr));
 }
 
 
 //waits for an ack
 int UDPSocket::writeToSocketAndWait (char * buffer,  int maxBytes, int server_port, char *hostname, int sec, char *ack)
 {
-    char ack1[2048];
-    memset(ack1, '\0', 2048);
+    char ack1[max_size];
+    memset(ack1, '\0', max_size);
     time_t start = time(NULL);
     time_t endwait = start + sec;
     int sent=-1,rec=-1;
@@ -132,16 +137,16 @@ int UDPSocket::writeToSocketAndWait (char * buffer,  int maxBytes, int server_po
     return sent;
 }
 
-int UDPSocket::readFromSocketWithNoBlock (char message1[2048], int  maxBytes)
+int UDPSocket::readFromSocketWithNoBlock (char message1[], int  maxBytes)
 {
     std::lock_guard<std::mutex> lock_m(m);
-    memset(message1, '\0', 2048);
+    memset(message1, '\0', max_size);
 
     int ret = recvfrom(sock, message1, maxBytes, 0, (struct sockaddr *)&myAddr, &aLength);
 
-    cout << "Message Recieved: ";
+   /* cout << "Message Recieved: ";
 
-printf("%s\n", message1);
+    printf("%s\n", message1);*/
 
     return ret;
 }
