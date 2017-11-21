@@ -22,7 +22,8 @@ void sendMsg(Message& msg)
 int main()
 {
 	Message msg(ImageReply, "10.7.57.249", 4444, "10.7.57.200", 4444);	
-	ImageData img("dog_b.jpg","dog_b.jpg" );
+	ImageData img("dog_s.jpg","dog_s.jpg" );
+	
 	msg.setData(img);
 	msg.Flatten();
 	msg.printMessageDetails();
