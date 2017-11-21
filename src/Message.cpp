@@ -226,11 +226,11 @@ bool Message::Flatten()
     	return false;
     }
     flattened+=ownerIP;
-    
+
     flattened+=seperator;
     if(targetIP.find(seperator)!=-1)
     {
-    	perror("Owner IP Error\n");
+    	perror("Target IP Error\n");
     	return false;
     }
     flattened+=targetIP;

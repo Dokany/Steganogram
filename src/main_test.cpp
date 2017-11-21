@@ -10,7 +10,7 @@
 using namespace std;
 
 //server
-Peer p("10.7.57.117", 4444);
+Peer p("10.7.57.249", 4444);
 
 void sendMsg(Message& msg)
 {
@@ -21,11 +21,11 @@ void sendMsg(Message& msg)
 
 int main()
 {
-	Message msg(Ack, "10.7.57.249", 4444, "10.7.57.249", 4444);	
-	AckData ack(AckType(0), msg.getID());
-	msg.setData(ack);
+	Message msg(ImageReply, "10.7.57.249", 4444, "10.7.57.200", 4444);	
+	ImageData img("dog_s.jpg","dog_s.jpg" );
+	msg.setData(img);
 	msg.Flatten();
-
+	msg.printMessageDetails();
   	thread t1 (sendMsg, ref(msg));	
 
   	// sending messages thread
@@ -33,14 +33,14 @@ int main()
 
 	// synchronize threads
  	t1.join();
- 	this_thread::sleep_for (std::chrono::seconds(3));
+ 	this_thread::sleep_for (std::chrono::seconds(10));
  	
-	cout << "Threads completed.\n";
+	// cout << "Threads completed.\n";
 	
-	Message msg2(Terminate,  "10.7.57.249", 4444, "10.7.57.249", 4444);	
-	//msg.Flatten();
-	thread t2 (sendMsg, ref(msg2));	
-	t2.join();
+	// Message msg2(Terminate,  "10.7.57.249", 4444, "10.7.57.249", 4444);	
+	// //msg.Flatten();
+	// thread t2 (sendMsg, ref(msg2));	
+	// t2.join();
 
 	p.halt();
 	

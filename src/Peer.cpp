@@ -89,21 +89,23 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 	//0 sending, 1 sent, 2 resend
 	PackGen pg(max_size);
 	vector<Message> msgs= pg.fragment(msg);
-
+	int ii=0;
     time_t start = time(NULL);
     time_t endwait = start + timeout;
     int msg_id = msg.getID();
     messageSentStatus[msg_id] = lost;
 	while(start < endwait && messageSentStatus[msg_id]!=sent)
 	{
+		//
 		if(messageSentStatus[msg_id]==lost)
 		{
+			cout<<" sending: "<< ii++<<endl;
 			for(Message mm:msgs)
 			{
 				string temp = mm.getFlattenedMessage();
 				char *cstr = new char[temp.length() + 1];
 				strcpy(cstr, temp.c_str());
-				while((udpSocket_client->writeToSocket(cstr, max_size, port, hostname)<0));
+				while((udpSocket_client->writeToSocket(cstr, max_size, port, hostname))<0);
 			}
 			messageSentStatus[msg_id]=sending;
 		}
@@ -250,10 +252,10 @@ void Peer::receiveHandler(int message_id, int timeout)
 	{
 		//if not send a neg ack
 		Message neg(NegAck, myIP,myPort,targetIP, targetPort);
-
+		neg.Flatten();
 		char *hn = new char[targetIP.length() + 1];
 		strcpy(hn, targetIP.c_str());
-		sendWithoutWaiting(neg,targetPort,hn);
+		sendWithoutWaiting(neg, targetPort,hn);
 
 	}
 	else 	
@@ -271,9 +273,10 @@ void Peer::receiveHandler(int message_id, int timeout)
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
 		{
 			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
+			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
 			strcpy(hn, targetIP.c_str());
-			sendWithoutWaiting(ackMessage,targetPort,hn);
+			sendWithoutWaiting(ackMessage, targetPort,hn);
 		}	
 
 

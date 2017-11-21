@@ -83,7 +83,7 @@ void UDPSocket::makeDestSA(struct sockaddr_in *peerAddr, char *hostname, int por
 
     if((host = gethostbyname(hostname)) == NULL)
     {
-        printf("Unknown host name\n");
+        printf("Unknown host name: %s\n", hostname);
         exit(-1);
     }
 
