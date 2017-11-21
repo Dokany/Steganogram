@@ -104,8 +104,8 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 			for(Message mm:msgs)
 			{
 				//mm.Flatten();
-				if(temp=="")cout<<"temp is empty\n";
 				string temp = mm.getFlattenedMessage();
+				if(temp=="")cout<<"temp is empty\n";
 				char *cstr = new char[temp.length() + 1];
 				strcpy(cstr, temp.c_str());
 				while((udpSocket_client->writeToSocket(cstr, max_size, port, hostname))<0);
