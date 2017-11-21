@@ -64,7 +64,7 @@ void Peer::sendMain()
 					strcpy(IP, msg.getTargetIP().c_str());
 					cout << std::this_thread::get_id() << "\t Sending message to IP: " << msg.getTargetIP() <<" : "<<msg.getTargetPort() << endl;
 					//cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
-					sendHandler(msg, msg.getTargetPort(), IP, 7);
+					sendHandler(msg, msg.getTargetPort(), IP, 25);
 					requests.pop();
 					cout << "Message Sent Handled.\n";
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -199,7 +199,7 @@ void Peer::receiveMain()
 				{
 					int msgID = replies.front();
 					cout << std::this_thread::get_id() << ": Recieving Message" << endl;
-					receiveHandler(msgID, 5);
+					receiveHandler(msgID, 25);
 					replies.pop();
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
 					lck2.unlock();		// release lck
@@ -278,7 +278,6 @@ void Peer::receiveHandler(int message_id, int timeout)
 			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
 			AckData ad(_Ack, segmentTable[message_id].back().getID());
 			ackMessage.setData(ad);
-			ackMessage.Flatten();
 			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
 			strcpy(hn, targetIP.c_str());
