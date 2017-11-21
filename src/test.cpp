@@ -12,19 +12,35 @@ int main()
 	Message tst(ImageReply, "192.168.1.5", 9999,"192.168.1.5", 9999);
 	
 	ImageData id("dog_b.jpg","dog_b.jpg");
-	id.Flatten();
+	
 	tst.setData(id);
 	tst.Flatten();
-	tst.printMessageDetails();
-	PackGen pg(50000),pg2(50000);
+	// string first=tst.getData();
+	// cout<<first.substr(49950,100)<<endl;
+	 PackGen pg(50000),pg2(50000);
 	vector<Message> msgs = pg.fragment(tst);
+	vector<Message> msgs2(msgs.size());
+	cout<<endl;
+	for(int i=0;i<msgs.size();i++){msgs[i].Flatten();
+		cout<<msgs[i].getFlattenedMessage()<<endl;
+		// string current = msgs[i].getData();
+		// if(i==0)cout<<current.substr(49950,50)<<endl<<endl;
+		// else  cout<<current.substr(0,200)<<endl<<endl;
+	}
+	for(int i=0;i<msgs.size();i++)
+		{
+			msgs2[i].unFlatten(msgs[i].getFlattenedMessage());
+		 msgs2[i].printMessageDetails();
+		}
 
-	//for(Message mm:msgs)mm.printMessageDetails();
+	Message res = pg2.defragment(msgs2);
 
-	Message res = pg2.defragment(msgs);
+	//first=res.getData();
+	//cout<<first.substr(49950,100)<<endl;
+	cout<<"start: "<<res.getFlattenedMessage()<<"    end\n";
 	res.printMessageDetails();
 	ofstream out;
-	out.open("dogg.jpg");
+	out.open("OUTPUT.jpg");
 	//string ff=res.getFlattenedMessage();
 	//Message tst2;
 	//tst2.unFlatten(ff);

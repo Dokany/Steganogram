@@ -102,7 +102,6 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 			cout<<" sending: "<< ii++<<endl;
 			for(Message mm:msgs)
 			{
-				mm.Flatten();
 				string temp = mm.getFlattenedMessage();
 				char *cstr = new char[temp.length() + 1];
 				strcpy(cstr, temp.c_str());

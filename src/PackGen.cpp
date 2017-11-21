@@ -1,6 +1,7 @@
 #include "PackGen.h"
 #include <algorithm>
 #include<iostream>
+#include<fstream>
 PackGen::PackGen(int max_size){
 	this->max_size=max_size;
 }
@@ -35,11 +36,20 @@ vector<Message> PackGen::fragment(Message m)
 			mm.setTargetPort(targetPort);
 			mm.setSeg(total, seg);
 			mm.setType(mt);
+			int mx;
 			if(seg!=total)
+			{
 				mm.setDataSize(max_size);
-			else
+				mx=max_size;
+			}
+			else{
 				mm.setDataSize(m.getDataSize()%max_size);
-			string partialData = fullData.substr(start,max_size);
+				mx=m.getDataSize()%max_size;
+			}
+
+				
+			string partialData = fullData.substr(start,mx);
+			//cout<<partialData.size()<<endl;
 			mm.setFlattenedData(partialData);
 			start+=max_size;
 
@@ -76,8 +86,8 @@ Message PackGen::defragment(vector<Message> vm)
 	int total_data_size = 0;
 	for(Message m:vm)
 	{
-		fullData+=m.getData();
-
+		string cur = m.getData();
+		fullData+=cur;
 		total_data_size += m.getDataSize();
 	}
 	Message mm;

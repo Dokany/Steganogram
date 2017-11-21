@@ -266,19 +266,14 @@ bool Message::unFlatten(string s)
 	ss>>targetIP;
 	ss>>tmp;
 	type=(MessageType)stoi(tmp);
-	getline(ss,tmp);
-	if(tmp.length()>0)
-	{
-		tmp.erase(0,1);
-	}
-	data = tmp;
-	data+='\n';
-	while(getline(ss,tmp))
-	{
-		data+=tmp;
+	data="";
+	char c;
 
-	data+='\n';
+	while(ss.get(c))
+	{
+		data+=c;
 	}
+	data.erase(0,1);
 	
 
 }

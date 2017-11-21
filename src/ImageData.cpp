@@ -82,18 +82,14 @@ bool ImageData::unFlatten(string s)
 	stringstream ss(s);
 	string tmp;
 	ss>>name;
-	getline(ss,tmp);
-	if(tmp.length()>0)
+	image="";
+	char c;
+
+	while(ss.get(c))
 	{
-		tmp.erase(0,1);
+		image+=c;
 	}
-	image = tmp;
-	image +='\n';
-	while(getline(ss,tmp))
-	{
-		image+=tmp;
-		image+='\n';
-	}
+	image.erase(0,1);
 	return true;
 } 
 
