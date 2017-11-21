@@ -177,11 +177,11 @@ bool Peer::getRequest()
 			replies.push(msg.getID());
 			cond1.notify_one();		// notify that a new message is received 
 		}
-		/*else if (!(search->second)) // if message is not complete
+		else if (!(search->second)) // if message is not complete
 		{
-			messageSentStatus[msg.getID()] = sending;
+			//messageSentStatus[msg.getID()] = sending;
 			segmentTable[msg.getID()].push_back(msg);
-		}*/
+		}
 	}
 	return true;
 }
