@@ -103,7 +103,8 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 			cout<<" sending: "<< ii++<<endl;
 			for(Message mm:msgs)
 			{
-				mm.Flatten();
+				//mm.Flatten();
+				if(temp=="")cout<<"temp is empty\n";
 				string temp = mm.getFlattenedMessage();
 				char *cstr = new char[temp.length() + 1];
 				strcpy(cstr, temp.c_str());
@@ -272,7 +273,7 @@ void Peer::receiveHandler(int message_id, int timeout)
 		//defragment
 		PackGen pg(max_size);
 		Message defraggedMessage = pg.defragment(segmentTable[message_id]);
-		defraggedMessage.Flatten();
+		//defraggedMessage.Flatten();
 		//send ack
 		MessageType mmt = defraggedMessage.getType();
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
