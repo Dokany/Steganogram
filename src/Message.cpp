@@ -7,12 +7,14 @@ Message::Message()
 
 }
 
-Message::Message(MessageType type, string IP, int Port)
+Message::Message(MessageType type, string IP, int Port, string targetIP, int targetPort)
 {
 	messageID = all_ID++;
 	ownerPort = Port;
-	if(IP.find(' ')!=-1)perror("IP error\n");
+	this->targetPort = targetPort;
+	if(IP.find(' ')!=-1 || targetIP.find(' ')!=-1 )perror("IP error\n");
 	ownerIP = IP;
+	this->targetIP = targetIP;
 	this->type = type;
 	seg_num = seg_tot = 1;
 	data="";
@@ -25,9 +27,11 @@ Message::Message(const Message& other)
 	seg_tot = other.seg_tot;
 	size = other.size;
 	ownerPort = other.ownerPort;
+	targetPort = other.targetPort;
 	type = other.type;
 	data = other.data;
 	ownerIP = other.ownerIP;
+	targetIP = other.targetIP;
 	flattened = other.flattened;
 
 }
@@ -41,6 +45,8 @@ Message& Message::operator=(const Message& other)
 	ownerPort = other.ownerPort;
 	type = other.type;
 	data = other.data;
+	ownerIP = other.ownerIP;
+	targetIP = other.targetIP;
 	ownerIP = other.ownerIP;
 	flattened = other.flattened;
 
@@ -184,6 +190,16 @@ string Message::getOwnerIP()
 {
 	return ownerIP;
 }
+
+int Message::getTargetPort()
+{
+	return targetPort;
+}
+string Message::getTargetIP()
+{
+	return targetIP;
+}
+
 int Message::getDataSize()
 {
 	return size;
@@ -202,12 +218,22 @@ bool Message::Flatten()
     flattened+=seperator;
     flattened+=to_string(ownerPort);
     flattened+=seperator;
+    flattened+=to_string(targetPort);
+    flattened+=seperator;
     if(ownerIP.find(seperator)!=-1)
     {
-    	perror("IP Error\n");
+    	perror("Owner IP Error\n");
     	return false;
     }
     flattened+=ownerIP;
+    
+    flattened+=seperator;
+    if(targetIP.find(seperator)!=-1)
+    {
+    	perror("Owner IP Error\n");
+    	return false;
+    }
+    flattened+=targetIP;
     flattened+=seperator;
     flattened+=to_string((int)type);
     flattened+=seperator;
@@ -233,8 +259,11 @@ bool Message::unFlatten(string s)
 	ss>>tmp;
 	size=stoi(tmp);
 	ss>>tmp;
-	ownerPort=stoi(tmp);
+	ownerPort=stoi(tmp);	
+	ss>>tmp;
+	targetPort=stoi(tmp);
 	ss>>ownerIP;
+	ss>>targetIP;
 	ss>>tmp;
 	type=(MessageType)stoi(tmp);
 	getline(ss,tmp);
@@ -262,11 +291,11 @@ void Message::setMessageID(int num)
 {
 	messageID=num;
 }
-void Message::setPort(int num)
+void Message::setOwnerPort(int num)
 {
 	ownerPort=num;
 }
-void Message::setIP(string s)
+void Message::setOwnerIP(string s)
 {
 	if(s.find(' ')!=-1){
 		perror("IP error\n");
@@ -275,12 +304,27 @@ void Message::setIP(string s)
 	ownerIP=s;
 }
 
+void Message::setTargetPort(int num)
+{
+	targetPort=num;
+}
+void Message::setTargetIP(string s)
+{
+	if(s.find(' ')!=-1){
+		perror("IP error\n");
+		return;
+	}
+	targetIP=s;
+}
+
 void Message::printMessageDetails()
 {
 	cout<<"Message ID: "<<messageID<<endl;
 	cout<<"Segment "<<seg_num<<"/"<<seg_tot<<endl;
 	cout<<"Owner IP: "<<ownerIP<<endl;
-	cout<<"Owner Port: "<<ownerPort<<endl;
+	cout<<"Owner Port: "<<ownerPort<<endl;	
+	cout<<"Target IP: "<<targetIP<<endl;
+	cout<<"Target Port: "<<targetPort<<endl;
 	cout<<"Data Size: "<<size<<endl;
 	cout<<"Message Type: "<<type<<endl;
 }

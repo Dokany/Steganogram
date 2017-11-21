@@ -22,9 +22,9 @@ enum MessageType {  Ping, Auth, StatusReply, ImageListReply,
 class Message
 {
     private:
-        int messageID, seg_num, seg_tot, size, ownerPort;
+        int messageID, seg_num, seg_tot, size, ownerPort, targetPort;
         MessageType type;
-        string data, ownerIP, flattened;
+        string data, ownerIP, targetIP, flattened;
         static int all_ID;
         const char seperator = ' ';
 
@@ -32,7 +32,7 @@ class Message
         Message();
         Message(const Message& other);
         Message& operator=(const Message& other);
-    	Message(MessageType type, string IP, int Port);
+        Message(MessageType type, string IP, int Port, string targetIP, int targetPort);
         int getID();
         MessageType getType();
     	bool setData(Data &d);
@@ -43,13 +43,18 @@ class Message
     	int getSegTot();
     	int getOwnerPort();
     	string getOwnerIP();
+
+        int getTargetPort();
+        string getTargetIP();
     	int getDataSize();
 
         void setFlattenedData(string s);
 
         void setMessageID(int num);
-        void setPort(int num);
-        void setIP(string s);
+        void setOwnerPort(int num);
+        void setOwnerIP(string s);
+        void setTargetPort(int num);
+        void setTargetIP(string s);
         void setType(MessageType mt);
         void setDataSize(int i);
         

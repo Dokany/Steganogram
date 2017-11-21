@@ -9,6 +9,7 @@
 #include <chrono>
 using namespace std;
 
+//server
 Peer p("10.7.57.117", 4444);
 
 void sendMsg(Message& msg)
@@ -20,7 +21,7 @@ void sendMsg(Message& msg)
 
 int main()
 {
-	Message msg(Ack, "10.7.57.117", 4445);	
+	Message msg(Ack, "10.7.57.249", 4444, "10.7.57.249", 4444);	
 	AckData ack(AckType(0), msg.getID());
 	msg.setData(ack);
 	msg.Flatten();
@@ -36,7 +37,7 @@ int main()
  	
 	cout << "Threads completed.\n";
 	
-	Message msg2(Terminate, "10.7.57.117", 4445);
+	Message msg2(Terminate,  "10.7.57.249", 4444, "10.7.57.249", 4444);	
 	//msg.Flatten();
 	thread t2 (sendMsg, ref(msg2));	
 	t2.join();

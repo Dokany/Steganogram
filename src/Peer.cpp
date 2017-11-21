@@ -60,11 +60,11 @@ void Peer::sendMain()
 				if (listening)
 				{
 					Message msg = requests.front();
-					//char *IP = new char[msg.getOwnerIP().length() + 1];
-					//strcpy(IP, msg.getOwnerIP().c_str());
-					cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
+					char *IP = new char[msg.getTargetIP().length() + 1];
+					strcpy(IP, msg.getOwnerIP().c_str());
+					cout << std::this_thread::get_id() << "\t Sending message to IP: " << msg.getTargetIP() <<" : "<<msg.getTargetPort() << endl;
 					//cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
-					sendHandler(msg, myPort, myHostname, 7);
+					sendHandler(msg, msg.getTargetPort(), IP, 7);
 					requests.pop();
 					cout << "Message Sent Handled.\n";
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -190,6 +190,7 @@ void Peer::receiveMain()
 		processes_r.push_back(std:: thread([&](){
 			while (true) {
 				std::unique_lock<std::mutex> lck2 (mutex_2);
+				if (!listening) return;
 				cond1.wait(lck2);		// release lck and waits
 				
 				if (listening)
@@ -233,6 +234,8 @@ void Peer::receiveHandler(int message_id, int timeout)
     time_t endwait = start + timeout;
     bool complete = false;
     int total = segmentTable[message_id].back().getSegTot();
+    string targetIP =  segmentTable[message_id].back().getOwnerIP();
+    int targetPort = segmentTable[message_id].back().getOwnerPort();
 
     while(start < endwait && !complete)
 	{
@@ -240,16 +243,17 @@ void Peer::receiveHandler(int message_id, int timeout)
 		start = time(NULL);
 	}
 
-	int port = segmentTable[message_id].back().getOwnerPort();
-	string temp = segmentTable[message_id].back().getOwnerIP();
-	char *hostname = new char[temp.length() + 1];
-	strcpy(hostname, temp.c_str());
+	int myPort = segmentTable[message_id].back().getTargetPort();
+	string myIP = segmentTable[message_id].back().getTargetIP();
 	
 	if(!complete)
 	{
 		//if not send a neg ack
-		Message neg(NegAck, string(myHostname),myPort);
-		sendWithoutWaiting(neg,port,hostname);
+		Message neg(NegAck, myIP,myPort,targetIP, targetPort);
+
+		char *hn = new char[myIP.length() + 1];
+		strcpy(hn, myIP.c_str());
+		sendWithoutWaiting(neg,myPort,hn);
 
 	}
 	else 	
@@ -262,12 +266,14 @@ void Peer::receiveHandler(int message_id, int timeout)
 		PackGen pg(max_size);
 		Message defraggedMessage = pg.defragment(segmentTable[message_id]);
 
-				//send ack
+		//send ack
 		MessageType mmt = defraggedMessage.getType();
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
 		{
-			Message ackMessage(Ack, string(myHostname),myPort);
-			sendWithoutWaiting(ackMessage,port,hostname);
+			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
+			char *hn = new char[myIP.length() + 1];
+			strcpy(hn, myIP.c_str());
+			sendWithoutWaiting(ackMessage,myPort,hn);
 		}	
 
 

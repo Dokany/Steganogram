@@ -17,8 +17,10 @@ vector<Message> PackGen::fragment(Message m)
 	{
 		int total = ceil((double)m.getDataSize()/(double)max_size);
 		string fullData = m.getData();
-		string IP = m.getOwnerIP();
-		int port = m.getOwnerPort();
+		string ownerIP = m.getOwnerIP();
+		int ownerPort = m.getOwnerPort();
+		string targetIP = m.getTargetIP();
+		int targetPort = m.getTargetPort();
 		int ID = m.getID();
 		MessageType mt = m.getType();
 		int start = 0;
@@ -26,8 +28,10 @@ vector<Message> PackGen::fragment(Message m)
 		{
 			Message mm;
 			mm.setMessageID(ID);
-			mm.setIP(IP);
-			mm.setPort(port);
+			mm.setOwnerIP(ownerIP);
+			mm.setOwnerPort(ownerPort);
+			mm.setTargetIP(targetIP);
+			mm.setTargetPort(targetPort);
 			mm.setSeg(total, seg);
 			mm.setType(mt);
 			if(seg!=total)
@@ -61,8 +65,10 @@ Message PackGen::defragment(vector<Message> vm)
 		return tt;
 	}
 	sort(vm.begin(),vm.end(),comp());
-	string IP = vm[0].getOwnerIP();
-	int port = vm[0].getOwnerPort();
+	string ownerIP = vm[0].getOwnerIP();
+	int ownerPort = vm[0].getOwnerPort();
+	string targetIP = vm[0].getTargetIP();
+	int targetPort = vm[0].getTargetPort();
 	int ID = vm[0].getID();
 	MessageType mt = vm[0].getType();
 	string fullData="";
@@ -74,8 +80,10 @@ Message PackGen::defragment(vector<Message> vm)
 	}
 	Message mm;
 	mm.setMessageID(ID);
-	mm.setIP(IP);
-	mm.setPort(port);
+	mm.setOwnerIP(ownerIP);
+	mm.setOwnerPort(ownerPort);
+	mm.setTargetIP(targetIP);
+	mm.setTargetPort(targetPort);
 	mm.setType(mt);
 	mm.setFlattenedData(fullData);
 	mm.setDataSize(total_data_size);
