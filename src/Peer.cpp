@@ -271,7 +271,7 @@ void Peer::receiveHandler(int message_id, int timeout)
 		//defragment
 		PackGen pg(max_size);
 		Message defraggedMessage = pg.defragment(segmentTable[message_id]);
-		pg.Flatten();
+		defraggedMessage.Flatten();
 		//send ack
 		MessageType mmt = defraggedMessage.getType();
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
