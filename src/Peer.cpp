@@ -60,6 +60,7 @@ void Peer::sendMain()
 				if (listening)
 				{
 					Message msg = requests.front();
+					msg.Flatten();
 					char *IP = new char[msg.getTargetIP().length() + 1];
 					strcpy(IP, msg.getTargetIP().c_str());
 					cout << std::this_thread::get_id() << "\t Sending message to IP: " << msg.getTargetIP() <<" : "<<msg.getTargetPort() << endl;
