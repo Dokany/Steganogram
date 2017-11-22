@@ -90,6 +90,7 @@ Message PackGen::defragment(vector<Message> vm)
 	{
 		m.Flatten();
 		string cur = m.getData();
+		
 		fullData+=cur;
 		total_data_size += m.getDataSize();
 	}
