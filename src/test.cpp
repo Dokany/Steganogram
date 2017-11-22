@@ -11,7 +11,7 @@ int main()
 
 	Message tst(ImageReply, "192.168.1.5", 9999,"192.168.1.5", 9999);
 	
-	ImageData id("dog_b.jpg","dog_b.jpg");
+	ImageData id("dog_s.jpg","dog_s.jpg");
 	
 	tst.setData(id);
 	tst.Flatten();

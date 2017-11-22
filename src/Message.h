@@ -47,6 +47,7 @@ class Message
         int getTargetPort();
         string getTargetIP();
     	int getDataSize();
+        int getTotalSize();
 
         void setFlattenedData(string s);
 

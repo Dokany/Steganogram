@@ -204,6 +204,10 @@ int Message::getDataSize()
 {
 	return size;
 }
+int Message::getTotalSize()
+{
+	return flattened.length();
+}
 bool Message::Flatten()
 {
 
@@ -237,6 +241,7 @@ bool Message::Flatten()
     flattened+=seperator;
     flattened+=to_string((int)type);
     flattened+=seperator;
+   // cout<<"data when flatteneing: "<<data<<endl;
     flattened+=data;
 
     return true;

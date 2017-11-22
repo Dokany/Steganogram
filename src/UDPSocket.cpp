@@ -98,7 +98,7 @@ int UDPSocket::writeToSocket (char * buffer,  int maxBytes, int server_port, cha
 
     makeDestSA(&peerAddr, hostname, server_port);
 
-    return sendto(sock, buffer, max_size, 0, (struct sockaddr *)&peerAddr, sizeof(peerAddr));
+    return sendto(sock, buffer, maxBytes, 0, (struct sockaddr *)&peerAddr, sizeof(peerAddr));
 }
 
 

@@ -10,6 +10,7 @@
 #include <string>
 #include <cstdio>
 #include <mutex>
+#include <algorithm>
 #include <chrono>
 using namespace std;
 
@@ -62,10 +63,10 @@ void Peer::sendMain()
 					Message msg = requests.front();
 					msg.Flatten();
 					char *IP = new char[msg.getTargetIP().length() + 1];
-					strcpy(IP, msg.getTargetIP().c_str());
+					memcpy(IP, msg.getTargetIP().c_str(),msg.getTargetIP().length()+1);
 					cout << std::this_thread::get_id() << "\t Sending message to IP: " << msg.getTargetIP() <<" : "<<msg.getTargetPort() << endl;
 					//cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
-					sendHandler(msg, msg.getTargetPort(), IP, 25);
+					sendHandler(msg, msg.getTargetPort(), IP, 75);
 					requests.pop();
 					cout << "Message Sent Handled.\n";
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -104,11 +105,19 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 			for(Message mm:msgs)
 			{
 				//mm.Flatten();
+				cout<<"sending "<<mm.getSegNum()<<" / "<<mm.getSegTot()<<endl;
 				string temp = mm.getFlattenedMessage();
+				//cout<<"sendhandler: "<<temp<<endl;
 				if(temp=="")cout<<"temp is empty\n";
 				char *cstr = new char[temp.length() + 1];
-				strcpy(cstr, temp.c_str());
-				while((udpSocket_client->writeToSocket(cstr, max_size, port, hostname))<0);
+				memcpy(cstr, temp.c_str(),temp.length()+1);
+				//std::replace(temp.begin(), temp.end(), '\0', ' ');
+			/*	cout<<"KARIIIIIIIIIIIIIIIIIIIIIIIIIIM\n";
+				for(int i=0;i<=temp.length();i++)
+				{
+					cout<<cstr[i];
+				}cout<<endl;*/
+				while((udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname))<0);
 			}
 			messageSentStatus[msg_id]=sending;
 		}
@@ -150,16 +159,23 @@ bool Peer::getRequest()
 {
 	char msg1[max_size];
 	int rr;
-	memset(msg1, 0, max_size);
+	//memset(msg1, 0, max_size);
 
 	// Listening for messages on socket
 	if((rr = udpSocket_server->readFromSocketWithNoBlock(msg1 , max_size) )> 0)
 	{
 		//Create message object
-			cout << "Message received\n";
+			
 
 		Message msg;
-		msg.unFlatten(string(msg1));
+		string recv="";
+		for(int i=0;i<=rr;i++)
+		{
+			recv+=msg1[i];
+		}
+
+		msg.unFlatten(recv);
+		cout << "Message received "<<msg.getSegNum()<<" "<<msg.getSegTot()<<endl;
 		/*if(msg.getType()==MessageType(Terminate)){
 			cout<<"Terminating getRequest\n";
 			//halt();
@@ -171,6 +187,7 @@ bool Peer::getRequest()
 		{	
 			//Message doesn't exist, assign to new thread
 			// Mutex Thread Handling
+
 			cout << "Message not found in history\n";
 			std::unique_lock<std::mutex> lck (mutex_2);
 			receivedMessageHistory[msg.getID()] = false;
@@ -182,7 +199,9 @@ bool Peer::getRequest()
 		else if (!(search->second)) // if message is not complete
 		{
 			//messageSentStatus[msg.getID()] = sending;
-			segmentTable[msg.getID()].push_back(msg);
+			bool found=false;
+			for(Message mm:segmentTable[msg.getID()])if(mm.getSegNum()==msg.getSegNum())found=true;
+			if(!found)segmentTable[msg.getID()].push_back(msg);
 		}
 	}
 	return true;
@@ -229,7 +248,7 @@ void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
 		string temp = mm.getFlattenedMessage();
 		char *msg = new char[temp.length() + 1];
 		strcpy(msg, temp.c_str());
-		while((udpSocket_client->writeToSocket(msg, max_size, port, hostname)<0));
+		while((udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname)<0));
 	}
 }
 
@@ -260,7 +279,7 @@ void Peer::receiveHandler(int message_id, int timeout)
 		neg.setData(nd);
 		neg.Flatten();
 		char *hn = new char[targetIP.length() + 1];
-		strcpy(hn, targetIP.c_str());
+		memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
 		sendWithoutWaiting(neg, targetPort,hn);
 
 	}
@@ -274,6 +293,8 @@ void Peer::receiveHandler(int message_id, int timeout)
 		PackGen pg(max_size);
 		Message defraggedMessage = pg.defragment(segmentTable[message_id]);
 		//defraggedMessage.Flatten();
+		int size = defraggedMessage.getData().length();
+		//cout<<"defraggedMessage data size: "<<size<<endl;
 		//send ack
 		MessageType mmt = defraggedMessage.getType();
 		if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
@@ -284,7 +305,8 @@ void Peer::receiveHandler(int message_id, int timeout)
 			ackMessage.setData(ad);
 			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
-			strcpy(hn, targetIP.c_str());
+			
+		memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
 			sendWithoutWaiting(ackMessage, targetPort,hn);
 		}	
 
@@ -325,7 +347,9 @@ void Peer::handleReceivedMessage(Message m)
 			path+='_';
 			path+=id.getName();
 			out.open(path);
-			out<<id.getImage();
+			string iim=id.getImage();
+			cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
+			out<<iim;
 			out.close();
 			break;
 
