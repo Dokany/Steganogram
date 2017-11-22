@@ -278,7 +278,7 @@ bool Message::unFlatten(string s)
 	{
 		data+=c;
 	}
-	data.erase(0,1);
+	//data.erase(0,1);
 	
 
 }

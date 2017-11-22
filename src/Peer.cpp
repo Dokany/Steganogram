@@ -169,10 +169,12 @@ bool Peer::getRequest()
 
 		Message msg;
 		string recv="";
-		for(int i=0;i<=rr;i++)
+		recv=string(&msg1[0], &msg1[rr-1]);
+		cout<<"RECV LENGHT "<<recv.length()<<endl;
+		/*for(int i=0;i<=rr;i++)
 		{
 			recv+=msg1[i];
-		}
+		}*/
 
 		msg.unFlatten(recv);
 		cout << "Message received "<<msg.getSegNum()<<" "<<msg.getSegTot()<<endl;
@@ -202,6 +204,7 @@ bool Peer::getRequest()
 			bool found=false;
 			for(Message mm:segmentTable[msg.getID()])if(mm.getSegNum()==msg.getSegNum())found=true;
 			if(!found)segmentTable[msg.getID()].push_back(msg);
+			else cout<<"duplicate found\n";
 		}
 	}
 	return true;
@@ -266,8 +269,9 @@ void Peer::receiveHandler(int message_id, int timeout)
 	{
 		complete = total==segmentTable[message_id].size();
 		start = time(NULL);
+		//cout<<total<< " "<<segmentTable[message_id].size()<<endl;
 	}
-
+	cout<<"I am out of the wait for all segments with total seg="<<segmentTable[message_id].size()<<endl;
 	int myPort = segmentTable[message_id].back().getTargetPort();
 	string myIP = segmentTable[message_id].back().getTargetIP();
 	
@@ -314,6 +318,7 @@ void Peer::receiveHandler(int message_id, int timeout)
 		//handle
 		handleReceivedMessage(defraggedMessage);
 	}
+	cout<<"exiting receive handler\n";
 }
 
 void Peer::handleReceivedMessage(Message m)

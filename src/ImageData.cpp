@@ -89,7 +89,7 @@ bool ImageData::unFlatten(string s)
 	{
 		image+=c;
 	}
-	image.erase(0,1);
+	//image.erase(0,1);
 	return true;
 } 
 
