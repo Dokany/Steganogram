@@ -8,6 +8,7 @@ PackGen::PackGen(int max_size){
 vector<Message> PackGen::fragment(Message m)
 {
 	vector<Message> tmp;
+	int tmp_max = max_size-100;
 	m.Flatten();
 	if(m.getDataSize()<=max_size)
 	{
@@ -17,7 +18,7 @@ vector<Message> PackGen::fragment(Message m)
 	}
 	else
 	{
-		int total = ceil((double)m.getDataSize()/(double)max_size);
+		int total = ceil((double)m.getDataSize()/(double) tmp_max);
 		string fullData = m.getData();
 		string ownerIP = m.getOwnerIP();
 		int ownerPort = m.getOwnerPort();
@@ -39,12 +40,12 @@ vector<Message> PackGen::fragment(Message m)
 			int mx;
 			if(seg!=total)
 			{
-				mm.setDataSize(max_size);
-				mx=max_size;
+				mm.setDataSize( tmp_max);
+				mx= tmp_max;
 			}
 			else{
-				mm.setDataSize(m.getDataSize()%max_size);
-				mx=m.getDataSize()%max_size;
+				mm.setDataSize(m.getDataSize()% tmp_max);
+				mx=m.getDataSize()% tmp_max;
 			}
 
 				
@@ -52,7 +53,7 @@ vector<Message> PackGen::fragment(Message m)
 			//cout<<partialData.size()<<endl;
 			mm.setFlattenedData(partialData);
 			mm.Flatten();
-			start+=max_size;
+			start+= tmp_max;
 
 			tmp.push_back(mm);
 		}
