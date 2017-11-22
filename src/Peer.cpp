@@ -111,6 +111,7 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 				if(temp=="")cout<<"temp is empty\n";
 				char *cstr = new char[temp.length() + 1];
 				memcpy(cstr, temp.c_str(),temp.length()+1);
+				cout<<"SENDTO LENGTH: "<<temp.length()+1<<endl;
 				//std::replace(temp.begin(), temp.end(), '\0', ' ');
 			/*	cout<<"KARIIIIIIIIIIIIIIIIIIIIIIIIIIM\n";
 				for(int i=0;i<=temp.length();i++)
@@ -169,7 +170,7 @@ bool Peer::getRequest()
 
 		Message msg;
 		string recv="";
-		recv=string(&msg1[0], &msg1[rr-1]);
+		recv=string(&msg1[0], &msg1[rr]);
 		cout<<"RECV LENGHT "<<recv.length()<<endl;
 		/*for(int i=0;i<=rr;i++)
 		{
