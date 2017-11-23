@@ -466,7 +466,7 @@ void Service::handleReceivedMessage(Message m, string id)
 			if(authenticate(ad.getUsername(),ad.getPassword(), targetIP, targetPort))
 			{
 				Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-				AckData ad(_Ack, segmentTable[id].back().getID());
+				AckData ad(_Ack, id);
 				ackMessage.setData(ad);
 				ackMessage.Flatten();
 				char *hn = new char[targetIP.length() + 1];
@@ -477,7 +477,7 @@ void Service::handleReceivedMessage(Message m, string id)
 			else
 			{
 				Message negAckMessage(NegAck, myIP,myPort, targetIP, targetPort);
-				AckData ad(_NegAck, segmentTable[id].back().getID());
+				AckData ad(_NegAck, id);
 				negAckMessage.setData(ad);
 				negAckMessage.Flatten();
 				char *hn = new char[targetIP.length() + 1];
