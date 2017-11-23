@@ -31,7 +31,7 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
     udpSocket_server->initializeServer(_listen_hostname, _listen_port);
 	udpSocket_client->initializeClient();
 	logged_in = false;
-	
+    waiting =true;
 	listening = true;
 
 	main_listen = thread(&Peer::listen,this);
@@ -45,34 +45,137 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
 	// receiving messages thread
 	// thread t2 (sendMsg, ref(msg));
 }
+
+/*Peer(const Peer& other)
+{
+    udpSocket_client=other.udpSocket_client;
+    udpSocket_server=other.udpSocket_server;
+
+    main_listen = other.main_listen;
+    main_pinger = other.main_pinger;
+    main_receive=other.main_receive;
+
+    myPort = other.myPort;
+    myHostname = other.myHostname;
+    servicePort = other.servicePort;
+    myPort = other.myPort;
+
+    username = other.username;
+
+    mutex_1 = other.mutex_1;
+    mutex_2 = other.mutex_2;
+    mutex_3 = other.mutex_3;
+
+    cond = other.cond;
+    cond1 = other.cond1;
+    listening = other.listening;
+
+    processes_r = other.processes_r;
+    processes_s = other.processes_s;
+
+    requests = other.requests;
+    requests_process = other.requests_process;
+    replies = other.replies;
+
+
+    messageSentStatus = other.messageSentStatus;
+    segmentTable = other.segmentTable;
+    receivedMessageHistory = other.receivedMessageHistory;
+
+    auth_id = other.auth_id;
+    currentOnlineUsers = other.currentOnlineUsers;
+    currentImageViewers = other.currentImageViewers;
+    imageStatus = other.imageStatus;
+    localImages = other.localImages;
+    pendingImageOwners = other.pendingImageOwners;
+}
+
+Peer& operator=(const Peer& other)
+{
+    udpSocket_client=other.udpSocket_client;
+    udpSocket_server=other.udpSocket_server;
+
+    main_listen = other.main_listen;
+    main_pinger = other.main_pinger;
+    main_receive=other.main_receive;
+
+    myPort = other.myPort;
+    myHostname = other.myHostname;
+    servicePort = other.servicePort;
+    myPort = other.myPort;
+
+    username = other.username;
+
+    mutex_1 = other.mutex_1;
+    mutex_2 = other.mutex_2;
+    mutex_3 = other.mutex_3;
+
+    cond = other.cond;
+    cond1 = other.cond1;
+    listening = other.listening;
+
+    processes_r = other.processes_r;
+    processes_s = other.processes_s;
+
+    requests = other.requests;
+    requests_process = other.requests_process;
+    replies = other.replies;
+
+
+    messageSentStatus = other.messageSentStatus;
+    segmentTable = other.segmentTable;
+    receivedMessageHistory = other.receivedMessageHistory;
+
+    auth_id = other.auth_id;
+    currentOnlineUsers = other.currentOnlineUsers;
+    currentImageViewers = other.currentImageViewers;
+    imageStatus = other.imageStatus;
+    localImages = other.localImages;
+    pendingImageOwners = other.pendingImageOwners;
+}
+*/
 bool Peer::login(string username, string password)
 {
 	Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
 	AuthData ad;
+    cout<<username<<" "<<password<<endl;
 	if(!ad.setUsername(username) ||!ad.setPassword(password))
 	{
-		perror("Username/passwordass invalid\n");
+        perror("Username/password invalid\n");
 		return false;
 	}
 	m.setData(ad);
 	m.Flatten();
-	execute(m);
-	auth_id = m.getID()+m.getOwnerIP();
+    execute(m);
+    waiting = true;
+   // cout<<"Waiting is "<<waiting<<endl;
+    while(waiting);
 
-
+    return logged_in;
 }
+
+int Peer::extract(string path)
+{
+
+
+    int cnt;
+
+    return cnt;
+}
+
 void Peer::ping()
 {
 	while(listening)
 	{
+        std::this_thread::sleep_for(std::chrono::seconds(15));
+        cout<<"pinging\n";
 		string myIP(myHostname);
 		string targetIP(serviceHostname);
 		Message ping(Ping, myIP, myPort, targetIP, servicePort);
 		PingData pd(username);
 		ping.setData(pd);
 		ping.Flatten();
-		execute(ping);
-		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+        execute(ping);
 	}
 }
 void Peer::execute(Message msg)
@@ -97,7 +200,10 @@ void Peer::sendMain()
 				if (listening)
 				{
 					Message msg = requests.front();
-					msg.setMessageID(msg.getID()+msg.getOwnerIP()+to_string(time(NULL)));
+                    string idd = msg.getID()+msg.getOwnerIP()+to_string(time(NULL));
+
+                    if(!logged_in)auth_id = idd;
+                    msg.setMessageID(idd);
 					msg.Flatten();
 					char *IP = new char[msg.getTargetIP().length() + 1];
 					memcpy(IP, msg.getTargetIP().c_str(),msg.getTargetIP().length()+1);
@@ -196,7 +302,10 @@ void Peer::listen()
 	
 }
 
-
+std::map<string,pair<string,int> > Peer::getStatus()
+{
+    return currentOnlineUsers;
+}
 
 bool Peer::getRequest()
 {
@@ -316,7 +425,7 @@ void Peer::receiveHandler(string message_id, int timeout)
 		start = time(NULL);
 		//cout<<total<< " "<<segmentTable[message_id].size()<<endl;
 	}
-	cout<<"I am out of the wait for all segments with total seg="<<segmentTable[message_id].size()<<endl;
+    //cout<<"I am out of the wait for all segments with total seg="<<segmentTable[message_id].size()<<endl;
 	int myPort = segmentTable[message_id].back().getTargetPort();
 	string myIP = segmentTable[message_id].back().getTargetIP();
 	
@@ -377,28 +486,31 @@ void Peer::handleReceivedMessage(Message m, string id)
 		{
 			AckData ad;
 			ad.unFlatten(data);
-			messageSentStatus[ad.getMessageID()]=sent;
-			if(ad.getMessageID()==auth_id)
+            messageSentStatus[ad.getMessageID()] = sent;
+
+            if(ad.getMessageID() == auth_id)
 			{
 				cout<<"Log is successful\n";
-				logged_in=true;
+                logged_in = true;
+                waiting = false;
 			}
-			else if(pendingImageOwners[ad.getMessageID()]!=pendingImageOwners.end())//he got the image
+            else if(pendingImageOwners.find(ad.getMessageID())!= pendingImageOwners.end())//he got the image
 			{
 				currentImageViewers[pendingImageOwners[ad.getMessageID()]].push_back(m.getOwnerIP());
 				pendingImageOwners.erase(ad.getMessageID());				
 			}
-			cout<<"Ack Received of Message: "<<ad.getMessageID()<<endl;
+            cout<<"Ack Received of Message: "<< ad.getMessageID() << endl;
 			break;
 		}
 		case NegAck:
 		{
 			AckData ad;
 			ad.unFlatten(data);
-			if(ad.getMessageID()==auth_id)
+            if(ad.getMessageID() == auth_id)
 			{
 				cout<<"Log is unsuccessful, retrying..\n";
-				logged_in=true;
+                logged_in = false;
+                waiting = false;
 			}
 			messageSentStatus[ad.getMessageID()]=lost;
 			break;
@@ -410,8 +522,8 @@ void Peer::handleReceivedMessage(Message m, string id)
 			id.unFlatten(data);
 			ofstream out;
 			string name=currentOnlineUsers[m.getOwnerIP()].first;
-			path+='_';
-			path+=id.getName();
+            name+='_';
+            name+=id.getName();
 			string path= "/Images/"+name;
 			out.open(path);
 			string iim=id.getImage();

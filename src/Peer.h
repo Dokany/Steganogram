@@ -7,6 +7,7 @@
 #include <queue>
 #include <map>
 #include <atomic>
+#include <set>
 #include <condition_variable>
 
 #ifndef PEER_H
@@ -27,7 +28,7 @@ class Peer
       	std::mutex mutex_1, mutex_2, mutex_3;
         std::condition_variable cond, cond1;
 
-        std::atomic<bool> listening;
+        std::atomic<bool> listening, logged_in, waiting;
 
         std::vector<std::thread> processes_r, processes_s, request_workers;
         std::queue<Message> requests;
@@ -56,15 +57,16 @@ class Peer
         void sendWithoutWaiting(Message m, int port, char *hostname);
         
         void ping();
-
+        int extract(string );
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
-        bool logged_in;
 
     public:
         Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
-        
+        //Peer(const Peer& other);
+        //Peer& operator=(const Peer& other);
+        std::map<string,pair<string,int> > getStatus();
         void start();
         int checkImage(string name, string ip);
         void addImage(string name, string path);
