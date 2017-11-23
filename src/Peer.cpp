@@ -119,6 +119,7 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 					cout<<cstr[i];
 				}cout<<endl;*/
 				while((udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname))<0);
+				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 			messageSentStatus[msg_id]=sending;
 		}

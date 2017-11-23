@@ -28,18 +28,20 @@ class Peer
 
         std::atomic<bool> listening;
 
-        std::vector<std::thread> processes_r, processes_s;
+        std::vector<std::thread> processes_r, processes_s, request_workers;
         std::queue<Message> requests;
+        std::queue<char*> requests_process; 
         std::queue<int> replies;
 
-        map<int,MessageStatusType> messageSentStatus; 
-        map<int,vector<Message> > segmentTable;
-        map<int,bool> receivedMessageHistory;
+        std::map<int,MessageStatusType> messageSentStatus; 
+        std::map<int,vector<Message> > segmentTable;
+        std::map<int,bool> receivedMessageHistory;
 
         const int max_size = 50000;
 
         bool getRequest();
         void listen();
+        void processRequest();
 
         void sendMain();
         void sendHandler(Message msg, int port, char *hostname, int timeout);
