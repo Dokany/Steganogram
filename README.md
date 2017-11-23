@@ -26,5 +26,6 @@ g++ -std=c++11 -pthread -Wno-write-strings Peer.h Peer.cpp Message.h Message.cpp
 
 ### References used:
 1. [Stegnography in C](https://github.com/samuelcouch/c-steganography)
+2. [Image Encrypt] (https://github.com/markwatson/Image-Encrypt)
 
 ##### This project is supervised by Prof. Amr El-Kadi under the CSCE 445/4411 course.
