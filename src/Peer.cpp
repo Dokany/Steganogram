@@ -185,7 +185,8 @@ bool Peer::getRequest()
 			//halt();
 			return false;
 		}*/
-		auto search = receivedMessageHistory.find(msg.getID());
+		string unique_id = to_string(msg.getID())+msg.getOwnerIP();
+		auto search = receivedMessageHistory.find(unique_id);
 
 		if(search == receivedMessageHistory.end()) 
 		{	
@@ -194,18 +195,18 @@ bool Peer::getRequest()
 
 			cout << "Message not found in history\n";
 			std::unique_lock<std::mutex> lck (mutex_2);
-			receivedMessageHistory[msg.getID()] = false;
+			receivedMessageHistory[unique_id] = false;
 			messageSentStatus[msg.getID()] = sending;
-			segmentTable[msg.getID()].push_back(msg);
-			replies.push(msg.getID());
+			segmentTable[unique_id].push_back(msg);
+			replies.push(unique_id);
 			cond1.notify_one();		// notify that a new message is received 
 		}
 		else if (!(search->second)) // if message is not complete
 		{
 			//messageSentStatus[msg.getID()] = sending;
 			bool found=false;
-			for(Message mm:segmentTable[msg.getID()])if(mm.getSegNum()==msg.getSegNum())found=true;
-			if(!found)segmentTable[msg.getID()].push_back(msg);
+			for(Message mm:segmentTable[unique_id])if(mm.getSegNum()==msg.getSegNum())found=true;
+			if(!found)segmentTable[unique_id].push_back(msg);
 			else cout<<"duplicate found\n";
 		}
 	}
@@ -224,7 +225,7 @@ void Peer::receiveMain()
 				
 				if (listening)
 				{
-					int msgID = replies.front();
+					string msgID = replies.front();
 					cout << std::this_thread::get_id() << ": Recieving Message" << endl;
 					receiveHandler(msgID, 25);
 					replies.pop();
@@ -257,7 +258,7 @@ void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
 	}
 }
 
-void Peer::receiveHandler(int message_id, int timeout)
+void Peer::receiveHandler(string message_id, int timeout)
 {
 	//make sure all segments are recevied within a timeout
 	time_t start = time(NULL);
@@ -312,21 +313,21 @@ void Peer::receiveHandler(int message_id, int timeout)
 			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
 			
-		memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
+			memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
 			sendWithoutWaiting(ackMessage, targetPort,hn);
 		}	
 
 
 		//handle
-		handleReceivedMessage(defraggedMessage);
+		handleReceivedMessage(defraggedMessage, message_id);
 	}
 	cout<<"exiting receive handler\n";
 }
 
-void Peer::handleReceivedMessage(Message m)
+void Peer::handleReceivedMessage(Message m, string id)
 {
 	MessageType mt = m.getType();
-	receivedMessageHistory[m.getID()]=true;
+	receivedMessageHistory[id]=true;
 	string data=m.getData();
 	switch(mt)
 	{

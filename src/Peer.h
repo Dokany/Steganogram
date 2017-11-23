@@ -31,11 +31,11 @@ class Peer
         std::vector<std::thread> processes_r, processes_s, request_workers;
         std::queue<Message> requests;
         std::queue<char*> requests_process; 
-        std::queue<int> replies;
+        std::queue<string> replies;
 
         std::map<int,MessageStatusType> messageSentStatus; 
-        std::map<int,vector<Message> > segmentTable;
-        std::map<int,bool> receivedMessageHistory;
+        std::map<string,vector<Message> > segmentTable;
+        std::map<string,bool> receivedMessageHistory;
 
         const int max_size = 50000;
 
@@ -47,8 +47,8 @@ class Peer
         void sendHandler(Message msg, int port, char *hostname, int timeout);
         void sendWithoutWaiting(Message m, int port, char *hostname);
         
-        void receiveHandler(int id, int timeout);
-        void handleReceivedMessage(Message m);
+        void receiveHandler(string message_id, int timeout);
+        void handleReceivedMessage(Message m, string id);
         void receiveMain();
 
     public:
