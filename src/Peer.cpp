@@ -67,11 +67,13 @@ void Peer::sendMain()
 					memcpy(IP, msg.getTargetIP().c_str(),msg.getTargetIP().length()+1);
 					cout << std::this_thread::get_id() << "\t Sending message to IP: " << msg.getTargetIP() <<" : "<<msg.getTargetPort() << endl;
 					//cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
-					sendHandler(msg, msg.getTargetPort(), IP, 75);
 					requests.pop();
+					lck.unlock();
+					sendHandler(msg, msg.getTargetPort(), IP, 75);
+
 					cout << "Message Sent Handled.\n";
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
-					lck.unlock();		// release lck
+							// release lck
 				}
 				else 
 				{
@@ -180,7 +182,7 @@ bool Peer::getRequest()
 		}*/
 
 		msg.unFlatten(recv);
-		cout << "Message received "<<msg.getSegNum()<<" "<<msg.getSegTot()<<endl;
+		cout << "Message received "<<msg.getSegNum()<<" "<<msg.getSegTot()<<" ID: "<<msg.getID()<<endl;
 		/*if(msg.getType()==MessageType(Terminate)){
 			cout<<"Terminating getRequest\n";
 			//halt();
@@ -228,10 +230,11 @@ void Peer::receiveMain()
 				{
 					string msgID = replies.front();
 					cout << std::this_thread::get_id() << ": Recieving Message" << endl;
-					receiveHandler(msgID, 25);
 					replies.pop();
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
-					lck2.unlock();		// release lck
+					lck2.unlock();
+					receiveHandler(msgID, 25);
+							// release lck
 				}
 				else 
 				{
