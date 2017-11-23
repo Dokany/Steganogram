@@ -19,9 +19,10 @@ class Peer
         UDPSocket * udpSocket_client;
         UDPSocket * udpSocket_server;
 
-        thread main_send, main_receive, main_listen;
-        int myPort;
-        char * myHostname;
+        thread main_send, main_receive, main_listen, main_pinger;
+        int myPort, servicePort;
+        char * myHostname, *serviceHostname ;
+        string username;
 
       	std::mutex mutex_1, mutex_2, mutex_3;
         std::condition_variable cond, cond1;
@@ -47,12 +48,14 @@ class Peer
         void sendHandler(Message msg, int port, char *hostname, int timeout);
         void sendWithoutWaiting(Message m, int port, char *hostname);
         
+        void ping();
+
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
 
     public:
-        Peer(char * _listen_hostname, int _listen_port);
+        Peer(string username, char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
         
         void execute(Message msg);
 

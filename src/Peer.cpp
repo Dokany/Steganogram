@@ -14,14 +14,19 @@
 #include <chrono>
 using namespace std;
 
-Peer::Peer(char * _listen_hostname, int _listen_port)
+Peer::Peer(string username, char * _listen_hostname, int _listen_port, char* service_hostname, int service_port)
 {
     this->udpSocket_server = new UDPSocket();
     this->udpSocket_client = new UDPSocket();
+    this->username=username;
 
     myPort = _listen_port;
     myHostname = new char[strlen(_listen_hostname)+1];
     strcpy(myHostname,_listen_hostname);
+
+    servicePort = service_port;
+    serviceHostname = new char[strlen(service_hostname)+1];
+    strcpy(serviceHostname,service_hostname);
 
     udpSocket_server->initializeServer(_listen_hostname, _listen_port);
 	udpSocket_client->initializeClient();
@@ -29,6 +34,7 @@ Peer::Peer(char * _listen_hostname, int _listen_port)
 	listening = true;
 
 	main_listen = thread(&Peer::listen,this);
+	main_pinger = thread(&Peer::ping,this);
 
 	sendMain();
 	receiveMain();
@@ -38,7 +44,20 @@ Peer::Peer(char * _listen_hostname, int _listen_port)
 	// thread t2 (sendMsg, ref(msg));
 }
 
-
+void Peer::ping()
+{
+	while(listening)
+	{
+		string myIP(myHostname);
+		string targetIP(serviceHostname);
+		Message ping(Ping, myIP, myPort, targetIP, servicePort);
+		PingData pd(username);
+		ping.setData(pd);
+		ping.Flatten();
+		execute(ping);
+		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
+	}
+}
 void Peer::execute(Message msg)
 {
 	// Mutex Thread Handling
@@ -139,6 +158,7 @@ void Peer::halt()
 	//while (main_listen.joinable());
 
 	main_listen.join();
+	main_pinger.join();
 
 	cond.notify_all();
 	cond1.notify_all();
