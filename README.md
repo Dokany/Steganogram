@@ -7,6 +7,28 @@ Image sharing application build using UNIX sockets and UDP to implement Remote I
 - John Sourour
 - Yasmin ElDokany
 
+#### Dependencies to be installed:
+1. Imagemagick
+```
+wget http://www.imagemagick.org/download/ImageMagick.tar.gz
+```
+```
+tar xzvf ImageMagick.tar.gz
+```
+```
+cd ImageMagick/
+```
+```
+./configure --prefix=/opt/imagemagick-6.8 && make
+```
+```
+checkinstall
+```
+2. Steghide
+```
+sudo apt-get install steghide
+```
+
 #### To compile:
 ```g++ -std=c++11 -pthread -Wno-write-strings Peer.h Peer.cpp Message.h Message.cpp AckData.h AckData.cpp AuthData.h AuthData.cpp ImageListData.h ImageListData.cpp StatusData.h StatusData.cpp ImageRequestData.h ImageRequestData.cpp ImageData.h ImageData.cpp Data.h Data.cpp UDPSocket.h UDPSocket.cpp main_test.cpp PackGen.h PackGen.cpp -o o```
 
