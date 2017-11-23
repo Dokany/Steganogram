@@ -47,7 +47,6 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
 }
 bool Peer::login(string username, string password)
 {
-	cout<<string(myHostname)<<" "<<string(serviceHostname)<<endl;
 	Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
 	AuthData ad;
 	if(!ad.setUsername(username) ||!ad.setPassword(password))
@@ -66,8 +65,6 @@ void Peer::ping()
 {
 	while(listening)
 	{
-		
-		std::this_thread::sleep_for(std::chrono::seconds(500));
 		string myIP(myHostname);
 		string targetIP(serviceHostname);
 		Message ping(Ping, myIP, myPort, targetIP, servicePort);
@@ -75,6 +72,7 @@ void Peer::ping()
 		ping.setData(pd);
 		ping.Flatten();
 		execute(ping);
+		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	}
 }
 void Peer::execute(Message msg)
@@ -99,7 +97,7 @@ void Peer::sendMain()
 				if (listening)
 				{
 					Message msg = requests.front();
-					msg.setMessageID(msg.getID()+msg.getOwnerIP());
+					msg.setMessageID(msg.getID()+msg.getOwnerIP()+to_string(time(NULL)));
 					msg.Flatten();
 					char *IP = new char[msg.getTargetIP().length() + 1];
 					memcpy(IP, msg.getTargetIP().c_str(),msg.getTargetIP().length()+1);
@@ -197,6 +195,7 @@ void Peer::listen()
 	}
 	
 }
+
 
 
 bool Peer::getRequest()
@@ -372,7 +371,6 @@ void Peer::handleReceivedMessage(Message m, string id)
 	MessageType mt = m.getType();
 	receivedMessageHistory[id]=true;
 	string data=m.getData();
-
 	switch(mt)
 	{
 		case Ack:
@@ -384,6 +382,11 @@ void Peer::handleReceivedMessage(Message m, string id)
 			{
 				cout<<"Log is successful\n";
 				logged_in=true;
+			}
+			else if(pendingImageOwners[ad.getMessageID()]!=pendingImageOwners.end())//he got the image
+			{
+				currentImageViewers[pendingImageOwners[ad.getMessageID()]].push_back(m.getOwnerIP());
+				pendingImageOwners.erase(ad.getMessageID());				
 			}
 			cout<<"Ack Received of Message: "<<ad.getMessageID()<<endl;
 			break;
@@ -406,13 +409,17 @@ void Peer::handleReceivedMessage(Message m, string id)
 			ImageData id;
 			id.unFlatten(data);
 			ofstream out;
-			string path=m.getOwnerIP();
+			string name=currentOnlineUsers[m.getOwnerIP()].first;
 			path+='_';
 			path+=id.getName();
+			string path= "/Images/"+name;
 			out.open(path);
 			string iim=id.getImage();
-			cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
+
+			//cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
 			out<<iim;
+			int count = extract(path);
+			imageStatus[name]=count;
 			out.close();
 			break;
 
@@ -421,16 +428,18 @@ void Peer::handleReceivedMessage(Message m, string id)
 		{
 			if(!logged_in)return;
 			StatusData sd;
-			if(data=="")cout<<"NO data received\n";
 			sd.unFlatten(data);
 			cout<<"Received online users: \n";
 			vector<pair<string,pair<string, int> > > list = sd.getOnlineUsers();
+			currentOnlineUsers.clear();
 			for(pair<string,pair<string, int> > t:list)
 			{
 				string name = t.first;
 				string address = t.second.first;
 				int port = t.second.second;
 				cout<<name<<" "<<address<<" "<<port<<endl;
+				currentOnlineUsers[address].first = name;
+				currentOnlineUsers[address].second = port;
 			}
 			cout<<endl;
 			break;
@@ -490,9 +499,46 @@ void Peer::handleReceivedMessage(Message m, string id)
 		{
 			if(!logged_in)return;
 			perror("Unknown type received\n");
-			break;
 		}
 	}
+}
+
+
+int Peer::checkImage(string name, string ip)
+{
+	string img_name = currentOnlineUsers[ip].first+'_'+name;
+	if(imageStatus.find(img_name)==imageStatus.end())return -1;
+	else
+		return imageStatus[img_name];
+}
+
+void Peer::addImage(string name, string path)
+{
+	string new_path = "/Images/"+name;
+	ifstream in; 
+	ofstream of;
+	in.open(path);
+	string data;
+	in>>data;
+	of.open(new_path);
+	of<<data;
+
+	in.close();
+	of.close();
+
+	localImages.insert(name);
+
+
+}
+void Peer::sendImage(string name, string IP, int port)
+{
+	ImageData id(name,"/Images/"+name);
+	Message tst(ImageReply, string(myHostname), myPort, IP, port);
+	tst.setData(id);
+	tst.Flatten();
+	execute(tst);
+	string m_id = tst.getID()+tst.getOwnerIP();
+	pendingImageOwners[m_id]=name;
 }
 
 Peer::~Peer(){

@@ -149,7 +149,7 @@ void Service::pingHandler(string username)
 void Service::pingRefresh()
 {
 	thread t([&](){
-	    cout << "ping thread\n";
+	    //cout << "ping thread\n";
 	    while(listening)
 	    {
 		    time_t current_time;
@@ -420,6 +420,7 @@ void Service::handleReceivedMessage(Message m, string id)
 	int myPort = m.getTargetPort();
 	string targetIP = m.getOwnerIP();
 	int targetPort = m.getOwnerPort();
+	cout<<to_string(m.getType())<<"--------------------"<<endl;
 	switch(mt)
 	{
 		case Ack:
@@ -437,8 +438,12 @@ void Service::handleReceivedMessage(Message m, string id)
 			messageSentStatus[ad.getMessageID()]=lost;
 			break;
 		}
-		case StatusRequest:
+		case Ping:
 		{
+			PingData pd;
+			pd.unFlatten(data);
+			pingHandler(pd.getUsername());
+			cout<<"STATUS REQUEST RECIEVED :D"<<endl;
 			Message reply(StatusReply,myIP,myPort, targetIP, targetPort);
 			StatusData sd;
 			for (auto &a : online_list) 
@@ -480,12 +485,7 @@ void Service::handleReceivedMessage(Message m, string id)
 				memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
 				sendWithoutWaiting(negAckMessage, targetPort, hn);
 			}
-		}
-		case Ping:
-		{
-			PingData pd;
-			pd.unFlatten(data);
-			pingHandler(pd.getUsername());
+			break;
 
 		}
 		
@@ -523,6 +523,7 @@ void Service::handleReceivedMessage(Message m, string id)
 		default:
 		{
 			perror("Unknown type received\n");
+			break;
 		}
 	}
 }
