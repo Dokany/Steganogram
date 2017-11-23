@@ -5,7 +5,7 @@ AuthData::AuthData(){
 }
 bool AuthData::setUsername(string s)
 {
-	if(username.find(seperator)!=-1)
+    if(username.find(seperator)!= -1)
 	{
 		perror("restriced character used\n");
 		return false;

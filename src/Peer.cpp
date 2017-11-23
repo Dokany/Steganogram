@@ -167,7 +167,7 @@ void Peer::ping()
 {
 	while(listening)
 	{
-        std::this_thread::sleep_for(std::chrono::seconds(15));
+std::this_thread::sleep_for(std::chrono::seconds(15));
         cout<<"pinging\n";
 		string myIP(myHostname);
 		string targetIP(serviceHostname);
@@ -176,6 +176,7 @@ void Peer::ping()
 		ping.setData(pd);
 		ping.Flatten();
         execute(ping);
+
 	}
 }
 void Peer::execute(Message msg)

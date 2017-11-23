@@ -9,7 +9,7 @@
 using namespace std;
 
 //server
-Peer p("10.7.57.249", 4444);
+Peer p("10.7.57.249", 4444,"10.7.57.249", 4444);
 
 void sendMsg(Message& msg)
 {

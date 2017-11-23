@@ -369,7 +369,7 @@ void Service::receiveHandler(string message_id, int timeout)
 	{
 		//if not send a neg ack
 		Message neg(NegAck, myIP,myPort,targetIP, targetPort);
-		AckData nd(_NegAck, segmentTable[message_id].back().getID());
+        AckData nd(_NegAck,message_id);
 		neg.setData(nd);
 		neg.Flatten();
 		char *hn = new char[targetIP.length() + 1];
@@ -395,7 +395,7 @@ void Service::receiveHandler(string message_id, int timeout)
 		{
 			
 			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-			AckData ad(_Ack, segmentTable[message_id].back().getID());
+            AckData ad(_Ack, message_id);
 			ackMessage.setData(ad);
 			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
@@ -466,7 +466,7 @@ void Service::handleReceivedMessage(Message m, string id)
 			if(authenticate(ad.getUsername(),ad.getPassword(), targetIP, targetPort))
 			{
 				Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-				AckData ad(_Ack, id);
+                AckData ad(_Ack, id);
 				ackMessage.setData(ad);
 				ackMessage.Flatten();
 				char *hn = new char[targetIP.length() + 1];
@@ -477,7 +477,7 @@ void Service::handleReceivedMessage(Message m, string id)
 			else
 			{
 				Message negAckMessage(NegAck, myIP,myPort, targetIP, targetPort);
-				AckData ad(_NegAck, id);
+                AckData ad(_NegAck, id);
 				negAckMessage.setData(ad);
 				negAckMessage.Flatten();
 				char *hn = new char[targetIP.length() + 1];
