@@ -18,6 +18,7 @@ Message::Message(MessageType type, string IP, int Port, string targetIP, int tar
 	this->type = type;
 	seg_num = seg_tot = 1;
 	data="";
+	size=0;
 }
 
 Message::Message(const Message& other)
@@ -143,6 +144,13 @@ bool Message::setData(Data &d)
 			ImageData &id = dynamic_cast<ImageData&>(d);
 			id.Flatten();
 			data = id.getFlattenedData();
+			break;
+		}
+		case Ping:
+		{
+			PingData &pd = dynamic_cast<PingData&>(d);
+			pd.Flatten();
+			data = pd.getFlattenedData();
 			break;
 		}
 		default:
@@ -277,7 +285,7 @@ bool Message::unFlatten(string s)
 	{
 		data+=c;
 	}
-	data.erase(0,1);
+	if(data.length()>0)data.erase(0,1);
 	
 
 }

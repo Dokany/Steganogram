@@ -27,6 +27,7 @@ vector<Message> PackGen::fragment(Message m)
 		string ID = m.getID();
 		MessageType mt = m.getType();
 		int start = 0;
+
 		for(int seg = 1; seg<=total; seg++)
 		{
 			Message mm;
@@ -38,6 +39,7 @@ vector<Message> PackGen::fragment(Message m)
 			mm.setSeg(total, seg);
 			mm.setType(mt);
 			int mx;
+
 			if(seg!=total)
 			{
 				mm.setDataSize( tmp_max);
@@ -49,9 +51,12 @@ vector<Message> PackGen::fragment(Message m)
 			}
 
 				
-			string partialData = fullData.substr(start,mx);
-			//cout<<partialData.size()<<endl;
-			mm.setFlattenedData(partialData);
+			if(fullData.length()>0)
+			{
+				string partialData = fullData.substr(start,mx);
+				//cout<<partialData.size()<<endl;
+				mm.setFlattenedData(partialData);
+			}
 			mm.Flatten();
 			start+= tmp_max;
 

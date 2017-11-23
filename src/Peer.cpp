@@ -47,6 +47,7 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
 }
 bool Peer::login(string username, string password)
 {
+	cout<<string(myHostname)<<" "<<string(serviceHostname)<<endl;
 	Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
 	AuthData ad;
 	if(!ad.setUsername(username) ||!ad.setPassword(password))
@@ -65,6 +66,8 @@ void Peer::ping()
 {
 	while(listening)
 	{
+		
+		std::this_thread::sleep_for(std::chrono::seconds(500));
 		string myIP(myHostname);
 		string targetIP(serviceHostname);
 		Message ping(Ping, myIP, myPort, targetIP, servicePort);
@@ -72,7 +75,6 @@ void Peer::ping()
 		ping.setData(pd);
 		ping.Flatten();
 		execute(ping);
-		std::this_thread::sleep_for(std::chrono::milliseconds(3000));
 	}
 }
 void Peer::execute(Message msg)
@@ -370,6 +372,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 	MessageType mt = m.getType();
 	receivedMessageHistory[id]=true;
 	string data=m.getData();
+
 	switch(mt)
 	{
 		case Ack:
@@ -418,6 +421,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 		{
 			if(!logged_in)return;
 			StatusData sd;
+			if(data=="")cout<<"NO data received\n";
 			sd.unFlatten(data);
 			cout<<"Received online users: \n";
 			vector<pair<string,pair<string, int> > > list = sd.getOnlineUsers();
@@ -486,6 +490,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 		{
 			if(!logged_in)return;
 			perror("Unknown type received\n");
+			break;
 		}
 	}
 }
