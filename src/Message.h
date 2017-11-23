@@ -3,6 +3,7 @@
 #include "AuthData.h"
 #include "ImageListData.h"
 #include "AckData.h"
+#include "PingData.h"
 #include "StatusData.h"
 #include "ImageRequestData.h"
 #include "ImageData.h"

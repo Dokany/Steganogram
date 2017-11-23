@@ -432,6 +432,10 @@ void Peer::handleReceivedMessage(Message m, string id)
 		case Ping:
 
 		*/
+		default:
+		{
+			perror("Unknown type received\n");
+		}
 	}
 }
 

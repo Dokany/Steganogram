@@ -18,32 +18,62 @@ using namespace std;
 
 class Service
 {
-private:
+	 private:
+        UDPSocket * udpSocket_client;
+        UDPSocket * udpSocket_server;
 
-	UDPSocket * udpSocket;
+        thread main_send, main_receive, main_listen;
+        int myPort;
+        char * myHostname;
 
-	std::mutex mutex_;
-    std::condition_variable cond;
+      	std::mutex mutex_1, mutex_2, mutex_3;
+        std::condition_variable cond, cond1;
 
-    std::vector<std::thread> processes;
-    std::queue<char*> requests;
+        std::atomic<bool> listening;
+
+        std::vector<std::thread> processes_r, processes_s, request_workers;
+        std::queue<Message> requests;
+        std::queue<char*> requests_process; 
+        std::queue<string> replies;
+
+        std::map<string,MessageStatusType> messageSentStatus; 
+        std::map<string,vector<Message> > segmentTable;
+        std::map<string,bool> receivedMessageHistory;
 
 
-    bool getRequest();
-    void sendReply (char *_message, int client_port, char* client_hostname);  
+        ifstream inputFile;
+		hash<string> str_hash;
+		map<long unsigned int, pair<long unsigned int, bool> > user_directory;
+		map<string, time_t> online_directory;
+		map<string,pair<string,int> > online_list;
 
-	ifstream inputFile;
-	hash<string> str_hash;
-	map<long unsigned int, pair<long unsigned int, bool>> user_directory;
-	map<string, time_t> online_directory;
+        const int max_size = 50000;
 
-public:
+        bool getRequest();
+        void listen();
+        void processRequest();
 
-	Service(char * _listen_hostname, int _listen_port);
-	void authenticate(string username, string password);
-	void pingHandler(string IP, time_t current_time);
-	void pingRefresh();
-	bool listen();
-	~Service();
+
+        bool authenticate(string username, string password, string IP, int port);
+
+        void sendMain();
+        void sendHandler(Message msg, int port, char *hostname, int timeout);
+        void sendWithoutWaiting(Message m, int port, char *hostname);
+        
+        void receiveHandler(string message_id, int timeout);
+        void handleReceivedMessage(Message m, string id);
+        void receiveMain();
+
+    public:
+        Service(char * _listen_hostname, int _listen_port);
+        
+        void execute(Message msg);
+        
+		void pingHandler(string username);
+		void pingRefresh(); 
+        void halt();
+
+        ~Service();
+
 };
 #endif
