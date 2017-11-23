@@ -24,7 +24,7 @@ vector<Message> PackGen::fragment(Message m)
 		int ownerPort = m.getOwnerPort();
 		string targetIP = m.getTargetIP();
 		int targetPort = m.getTargetPort();
-		int ID = m.getID();
+		string ID = m.getID();
 		MessageType mt = m.getType();
 		int start = 0;
 		for(int seg = 1; seg<=total; seg++)
@@ -82,7 +82,7 @@ Message PackGen::defragment(vector<Message> vm)
 	int ownerPort = vm[0].getOwnerPort();
 	string targetIP = vm[0].getTargetIP();
 	int targetPort = vm[0].getTargetPort();
-	int ID = vm[0].getID();
+	string ID = vm[0].getID();
 	MessageType mt = vm[0].getType();
 	string fullData="";
 	int total_data_size = 0;

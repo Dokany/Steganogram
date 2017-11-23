@@ -61,7 +61,7 @@ void Peer::sendMain()
 				if (listening)
 				{
 					Message msg = requests.front();
-					msg.setMessageID(to_string(msg.get_id())+msg.getOwnerIP());
+					msg.setMessageID(msg.getID()+msg.getOwnerIP());
 					msg.Flatten();
 					char *IP = new char[msg.getTargetIP().length() + 1];
 					memcpy(IP, msg.getTargetIP().c_str(),msg.getTargetIP().length()+1);

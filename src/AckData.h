@@ -7,15 +7,15 @@ class AckData : public Data
 {
     private:
         AckType type_;
-        int message_id;
+        string message_id;
     public:
         AckData();
-    	AckData(AckType type, int message_id);
+    	AckData(AckType type, string message_id);
 
     	bool setType(AckType t);
-    	bool setMessageID(int id);
+    	bool setMessageID(string id);
     	AckType getType();
-    	int getMessageID();
+    	string getMessageID();
     	
         bool Flatten();
         bool unFlatten(string s);  

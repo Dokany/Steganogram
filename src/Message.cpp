@@ -9,7 +9,7 @@ Message::Message()
 
 Message::Message(MessageType type, string IP, int Port, string targetIP, int targetPort)
 {
-	messageID = all_ID++;
+	messageID = to_string(all_ID++);
 	ownerPort = Port;
 	this->targetPort = targetPort;
 	if(IP.find(' ')!=-1 || targetIP.find(' ')!=-1 )perror("IP error\n");
@@ -51,7 +51,7 @@ Message& Message::operator=(const Message& other)
 	flattened = other.flattened;
 
 }
-int Message::getID()
+string Message::getID()
 {
 	return messageID;
 }
@@ -212,7 +212,7 @@ bool Message::Flatten()
 {
 
     flattened = "";
-    flattened+=to_string(messageID);
+    flattened+=messageID;
     flattened+=seperator;
     flattened+=to_string(seg_num);
     flattened+=seperator;
@@ -255,8 +255,7 @@ bool Message::unFlatten(string s)
 	}
 	stringstream ss(s);
 	string tmp;
-	ss>>tmp;
-	messageID=stoi(tmp);	
+	ss>>messageID;	
 	ss>>tmp;
 	seg_num=stoi(tmp);
 	ss>>tmp;
@@ -287,7 +286,7 @@ string Message::getFlattenedMessage()
 	return flattened;
 }
 
-void Message::setMessageID(int num)
+void Message::setMessageID(string num)
 {
 	messageID=num;
 }
