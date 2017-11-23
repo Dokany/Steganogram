@@ -33,7 +33,7 @@ class Peer
         std::queue<char*> requests_process; 
         std::queue<string> replies;
 
-        std::map<int,MessageStatusType> messageSentStatus; 
+        std::map<string,MessageStatusType> messageSentStatus; 
         std::map<string,vector<Message> > segmentTable;
         std::map<string,bool> receivedMessageHistory;
 

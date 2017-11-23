@@ -61,6 +61,7 @@ void Peer::sendMain()
 				if (listening)
 				{
 					Message msg = requests.front();
+					msg.setMessageID(to_string(msg.get_id())+msg.getOwnerIP());
 					msg.Flatten();
 					char *IP = new char[msg.getTargetIP().length() + 1];
 					memcpy(IP, msg.getTargetIP().c_str(),msg.getTargetIP().length()+1);
@@ -94,7 +95,7 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
 	int ii=0;
     time_t start = time(NULL);
     time_t endwait = start + timeout;
-    int msg_id = msg.getID();
+    string msg_id = msg.getID();
     messageSentStatus[msg_id] = lost;
 	while(start < endwait && messageSentStatus[msg_id]!=sent)
 	{
@@ -185,7 +186,7 @@ bool Peer::getRequest()
 			//halt();
 			return false;
 		}*/
-		string unique_id = to_string(msg.getID())+msg.getOwnerIP();
+		string unique_id = msg.getID();
 		auto search = receivedMessageHistory.find(unique_id);
 
 		if(search == receivedMessageHistory.end()) 
@@ -196,7 +197,7 @@ bool Peer::getRequest()
 			cout << "Message not found in history\n";
 			std::unique_lock<std::mutex> lck (mutex_2);
 			receivedMessageHistory[unique_id] = false;
-			messageSentStatus[msg.getID()] = sending;
+			messageSentStatus[unique_id] = sending;
 			segmentTable[unique_id].push_back(msg);
 			replies.push(unique_id);
 			cond1.notify_one();		// notify that a new message is received 
