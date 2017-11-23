@@ -11,18 +11,9 @@ Image sharing application build using UNIX sockets and UDP to implement Remote I
 1. Imagemagick
 ```
 wget http://www.imagemagick.org/download/ImageMagick.tar.gz
-```
-```
 tar xzvf ImageMagick.tar.gz
-```
-```
 cd ImageMagick/
-```
-```
 ./configure --prefix=/opt/imagemagick-6.8 && make
-```
-```
-checkinstall
 ```
 2. Steghide
 ```
