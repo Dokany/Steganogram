@@ -38,6 +38,8 @@ class Peer
         std::map<string,vector<Message> > segmentTable;
         std::map<string,bool> receivedMessageHistory;
 
+        string auth_id;
+        
         const int max_size = 50000;
 
         bool getRequest();
@@ -53,10 +55,14 @@ class Peer
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
+        bool logged_in;
 
     public:
-        Peer(string username, char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
+        Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
         
+        void start();
+
+        bool login(string username, string password);
         void execute(Message msg);
 
         void halt();

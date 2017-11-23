@@ -1,4 +1,4 @@
-#include "Peer.h"
+#include "Service.h"
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
@@ -14,6 +14,11 @@
 #include <chrono>
 using namespace std;
 
+Service::Service()
+{
+
+}
+
 Service::Service(char * _listen_hostname, int _listen_port)
 {
     this->udpSocket_server = new UDPSocket();
@@ -28,7 +33,22 @@ Service::Service(char * _listen_hostname, int _listen_port)
 
 	listening = true;
 
-	main_listen = thread(&Peer::listen,this);
+	main_listen = thread(&Service::listen,this);
+	long unsigned int str_username;
+	long unsigned int str_password;
+	inputFile.open("auth.txt");
+
+	if (inputFile.is_open())
+	{
+		while (!inputFile.eof())
+		{
+			inputFile >> str_username >> str_password;
+			user_directory[str_username].first = str_password;
+			user_directory[str_username].second = false;
+		}
+	}
+
+else cout << "Unable to open file\n";
 
 	sendMain();
 	receiveMain();
@@ -38,6 +58,7 @@ Service::Service(char * _listen_hostname, int _listen_port)
 	// receiving messages thread
 	// thread t2 (sendMsg, ref(msg));
 }
+
 
 
 void Service::execute(Message msg)
@@ -398,7 +419,7 @@ void Service::handleReceivedMessage(Message m, string id)
 	string myIP = m.getTargetIP();
 	int myPort = m.getTargetPort();
 	string targetIP = m.getOwnerIP();
-	int ownerPort = m.getOwnerPort();
+	int targetPort = m.getOwnerPort();
 	switch(mt)
 	{
 		case Ack:
@@ -436,8 +457,8 @@ void Service::handleReceivedMessage(Message m, string id)
 			AuthData ad;
 			ad.unFlatten(data);
 			
-			messageSentStatus[ad.getMessageID()]=sent;
-			if(authenticate(ad.getUsername(),ad.getPassword()))
+			messageSentStatus[id]=sent;
+			if(authenticate(ad.getUsername(),ad.getPassword(), targetIP, targetPort))
 			{
 				Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
 				AckData ad(_Ack, segmentTable[id].back().getID());

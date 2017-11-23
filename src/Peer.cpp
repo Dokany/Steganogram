@@ -14,7 +14,7 @@
 #include <chrono>
 using namespace std;
 
-Peer::Peer(string username, char * _listen_hostname, int _listen_port, char* service_hostname, int service_port)
+Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port)
 {
     this->udpSocket_server = new UDPSocket();
     this->udpSocket_client = new UDPSocket();
@@ -30,7 +30,8 @@ Peer::Peer(string username, char * _listen_hostname, int _listen_port, char* ser
 
     udpSocket_server->initializeServer(_listen_hostname, _listen_port);
 	udpSocket_client->initializeClient();
-
+	logged_in = false;
+	
 	listening = true;
 
 	main_listen = thread(&Peer::listen,this);
@@ -38,12 +39,28 @@ Peer::Peer(string username, char * _listen_hostname, int _listen_port, char* ser
 
 	sendMain();
 	receiveMain();
+	
 	// main_receive = thread(&Peer::receiveMain,this);
 	// main_send = thread(&Peer::sendMain,this);	
 	// receiving messages thread
 	// thread t2 (sendMsg, ref(msg));
 }
+bool Peer::login(string username, string password)
+{
+	Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
+	AuthData ad;
+	if(!ad.setUsername(username) ||!ad.setPassword(password))
+	{
+		perror("Username/passwordass invalid\n");
+		return false;
+	}
+	m.setData(ad);
+	m.Flatten();
+	execute(m);
+	auth_id = m.getID()+m.getOwnerIP();
 
+
+}
 void Peer::ping()
 {
 	while(listening)
@@ -360,6 +377,11 @@ void Peer::handleReceivedMessage(Message m, string id)
 			AckData ad;
 			ad.unFlatten(data);
 			messageSentStatus[ad.getMessageID()]=sent;
+			if(ad.getMessageID()==auth_id)
+			{
+				cout<<"Log is successful\n";
+				logged_in=true;
+			}
 			cout<<"Ack Received of Message: "<<ad.getMessageID()<<endl;
 			break;
 		}
@@ -367,11 +389,17 @@ void Peer::handleReceivedMessage(Message m, string id)
 		{
 			AckData ad;
 			ad.unFlatten(data);
+			if(ad.getMessageID()==auth_id)
+			{
+				cout<<"Log is unsuccessful, retrying..\n";
+				logged_in=true;
+			}
 			messageSentStatus[ad.getMessageID()]=lost;
 			break;
 		}
 		case ImageReply:
 		{
+			if(!logged_in)return;
 			ImageData id;
 			id.unFlatten(data);
 			ofstream out;
@@ -388,6 +416,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 		}
 		case StatusReply:
 		{
+			if(!logged_in)return;
 			StatusData sd;
 			sd.unFlatten(data);
 			cout<<"Received online users: \n";
@@ -405,6 +434,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 		}
 		case ImageListReply:
 		{
+			if(!logged_in)return;
 			ImageListData ild;
 			ild.unFlatten(data);
 			cout<<"Received Image List: \n";
@@ -454,6 +484,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 		*/
 		default:
 		{
+			if(!logged_in)return;
 			perror("Unknown type received\n");
 		}
 	}

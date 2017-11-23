@@ -1,21 +1,19 @@
-#include <map>
-#include <functional>
-#include <fstream>
-#include <string>
-#include <utility>
+#include "Message.h"
 #include "UDPSocket.h"
-#include <exception>
+#include "PackGen.h"
 #include <thread>
 #include <mutex>
 #include <vector>
 #include <queue>
+#include <map>
+#include <atomic>
 #include <condition_variable>
-#include <ctime>
 using namespace std;
 
 #ifndef SERVICE_H
 #define SERVICE_H
 
+enum MessageStatusType{sending, sent, lost};
 class Service
 {
 	 private:
@@ -65,6 +63,7 @@ class Service
         void receiveMain();
 
     public:
+        Service();
         Service(char * _listen_hostname, int _listen_port);
         
         void execute(Message msg);
