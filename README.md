@@ -21,7 +21,8 @@ sudo apt-get install steghide
 ```
 
 ### To compile:
-```g++ -std=c++11 -pthread -Wno-write-strings Peer.h Peer.cpp Message.h Message.cpp AckData.h AckData.cpp AuthData.h AuthData.cpp ImageListData.h ImageListData.cpp StatusData.h StatusData.cpp PingData.h PingData.cpp ImageRequestData.h ImageRequestData.cpp ImageData.h ImageData.cpp Data.h Data.cpp UDPSocket.h UDPSocket.cpp main_test.cpp PackGen.h PackGen.cpp -o o```
+g++ -std=c++11 -pthread -Wno-write-strings Peer.h Peer.cpp Message.h Message.cpp AckData.h AckData.cpp AuthData.h AuthData.cpp ImageListData.h ImageListData.cpp StatusData.h StatusData.cpp PingData.h PingData.cpp ImageRequestData.h ImageRequestData.cpp ImageData.h ImageData.cpp Data.h Data.cpp UDPSocket.h UDPSocket.cpp main_service.cpp PackGen.h PackGen.cpp Service.cpp -o o
+
 
 ### References used:
 1. [Stegnography in C](https://github.com/samuelcouch/c-steganography)
