@@ -25,24 +25,24 @@ class Peer
         char * myHostname, *serviceHostname ;
         string username;
 
-      	std::mutex mutex_1, mutex_2, mutex_3;
+        std::mutex mutex_1, mutex_2, mutex_3;
         std::condition_variable cond, cond1;
 
         std::atomic<bool> listening, logged_in, waiting;
 
         std::vector<std::thread> processes_r, processes_s, request_workers;
         std::queue<Message> requests;
-        std::queue<char*> requests_process; 
+        std::queue<char*> requests_process;
         std::queue<string> replies;
 
-        std::map<string,MessageStatusType> messageSentStatus; 
+        std::map<string,MessageStatusType> messageSentStatus;
         std::map<string,vector<Message> > segmentTable;
         std::map<string,bool> receivedMessageHistory;
 
         string auth_id;
         std::map<string,pair<string,int> > nameToAddress;
         std::map<string,pair<string,int> > currentOnlineUsers;
-        std::map<string,vector<string>> currentImageViewers;
+        std::map<string,vector<pair<string,int> > > currentImageViewers;
         std::map<string,int> imageStatus;
         std::set<string> localImages, currentImageListReply;
         std::map<string,string> pendingImageOwners; //messageid and user to add to currentImageViewers
@@ -56,7 +56,7 @@ class Peer
         void sendMain();
         void sendHandler(Message msg, int port, char *hostname, int timeout);
         void sendWithoutWaiting(Message m, int port, char *hostname);
-        
+
         void ping();
         int extract(string );
         void receiveHandler(string message_id, int timeout);
@@ -68,6 +68,7 @@ class Peer
         //Peer(const Peer& other);
         //Peer& operator=(const Peer& other);
         std::map<string,pair<string,int> > getStatus();
+        vector<pair<string,int> > getCurrentImageViewers(string);
         void start();
         int checkImage(string name, string ip);
         void addImage(string name, string path);

@@ -389,6 +389,10 @@ bool Peer::getRequest()
     }
     return true;
 }
+ vector<pair<string,int> > Peer::getCurrentImageViewers(string name)
+ {
+     return currentImageViewers[name];
+ }
 
 void Peer::receiveMain()
 {
@@ -523,7 +527,8 @@ void Peer::handleReceivedMessage(Message m, string id)
             }
             else if(pendingImageOwners.find(ad.getMessageID())!= pendingImageOwners.end())//he got the image
             {
-                currentImageViewers[pendingImageOwners[ad.getMessageID()]].push_back(m.getOwnerIP());
+                string name = currentOnlineUsers[m.getOwnerIP()].first;
+                currentImageViewers[pendingImageOwners[ad.getMessageID()]].push_back(make_pair(name,5));
                 pendingImageOwners.erase(ad.getMessageID());
             }
             cout<<"Ack Received of Message: "<< ad.getMessageID() << endl;
