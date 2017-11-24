@@ -45,7 +45,10 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
     // receiving messages thread
     // thread t2 (sendMsg, ref(msg));
 }
-
+void Peer::logOff()
+{
+   logged_in=false;
+}
 /*Peer(const Peer& other)
 {
     udpSocket_client=other.udpSocket_client;
