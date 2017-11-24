@@ -69,6 +69,7 @@ class Peer
         QMainWindow *mw;
 
     public:
+        Peer();
         Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
         //Peer(const Peer& other);
         //Peer& operator=(const Peer& other);
@@ -87,7 +88,7 @@ class Peer
         void requestImage(string name, string user);
         void requestViews(string name, string user);
         void addViews(int count, string image, string user);
-
+        void logOff();
         void halt();
 
         ~Peer();
