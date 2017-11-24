@@ -685,8 +685,10 @@ void Peer::addImage(string name, string path)
 	ifstream in; 
 	ofstream of;
 	in.open(path);
-	string data;
-	in>>data;
+	string data="";
+	char c;
+	while(in.get(c))
+		data+=c;
 	of.open(new_path);
 	of<<data;
 
