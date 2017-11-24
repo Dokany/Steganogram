@@ -45,7 +45,9 @@ SOURCES += \
     imageviewer.cpp \
     accessjpeg.cpp \
     aesencrypt.cpp \
-    encryptjpeg.cpp
+    encryptjpeg.cpp \
+    ViewsRequestData.cpp \
+    ViewsReplyData.cpp
 
 HEADERS += \
         loginwindow.h \
@@ -68,7 +70,9 @@ HEADERS += \
     imageviewer.h \
     accessjpeg.h \
     aesencrypt.h \
-    encryptjpeg.h
+    encryptjpeg.h \
+    ViewsReplyData.h \
+    ViewsRequestData.h
 
 FORMS += \
         loginwindow.ui \

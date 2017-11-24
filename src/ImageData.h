@@ -11,7 +11,7 @@ using namespace std;
 class ImageData : public Data
 {
     private:
-        string image, name;
+        string image, name, path;
     public:
         ImageData();
         ImageData(string name, string path, int count);
@@ -19,10 +19,13 @@ class ImageData : public Data
         bool setName(string n);
         bool setImage(string path);
         void setCount(int);
+        void setPath(string path);
 
         int getCount();
         string getImage();
         string getName();
+        string getPath();
+
 
         bool Flatten();
         bool unFlatten(string s);

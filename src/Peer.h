@@ -84,7 +84,9 @@ class Peer
         bool login(string username, string password);
         void execute(Message msg);
         void copyWindow(QMainWindow *q);
-
+        void requestImage(string name, string user);
+        void requestViews(string name, string user);
+        void addViews(int count, string image, string user);
 
         void halt();
 

@@ -6,6 +6,7 @@ ImageData::ImageData(string name, string path, int count)
 {
     encryptJpeg enc;
     string out_path = "./." + name + " .txt";
+    this->path = path;
 
     char* inputPath = new char[path.length()+1];
     char* outPath = new char[out_path.length()+1];
@@ -21,13 +22,13 @@ ImageData::ImageData(string name, string path, int count)
     }
 
     // Creat hidden textfile containing image count
-    string tempFile = "." + name + "_TEMP.txt";
+    string tempFile = path + "_TEMP.txt";
     ofstream of;
     of.open(tempFile);
     of<<count;
 
     // Use steganography to hide count in image
-    string command = "steghide embed -ef " + tempFile + " -cf " + name + " -p 0 -f";
+    string command = "steghide embed -ef " + tempFile + " -cf " + path + " -p 0 -f";
 
     char* command_char = new char[command.length()+1];
     strcpy(command_char, command.c_str());
@@ -64,37 +65,147 @@ ImageData::ImageData(string name, string path, int count)
 }
 void ImageData::setCount(int count)
 {
-    string tempFile = "." + name + "_TEMP.txt";
-    ofstream of;
-    of.open(tempFile);
-    of<<count;
+    string tempFileDecrypt = path + "_decrypt.txt";
+    string outPath = path + "_encrypt.txt";
+    encryptJpeg enc;
 
-    // Use steganography to hide count in image
-    string command = "steghide embed -ef " + tempFile + " -cf " + name + " -p 0 -f";
+    char* fileDecrypt = new char[tempFileDecrypt.length()+1];
+    char* inPath = new char[path.length()+1];
+    char* oPath = new char[outPath.length() + 1];
+
+    strcpy(fileDecrypt, tempFileDecrypt.c_str());
+    strcpy(inPath, path.c_str());
+    strcpy(oPath, outPath.c_str());
+
+
+    // Use steganography to extract the encrypted file
+    string command =  "steghide extract -sf " + path + " -p 0 -f";
+
 
     char* command_char = new char[command.length()+1];
     strcpy(command_char, command.c_str());
     system(command_char);
 
-    if(remove(tempFile.c_str())!=0)cout<<"Couldn't delete file\n";
+    //Decrypt
+    enc.setInFile(inPath);
+    enc.setOutFile(fileDecrypt);
+    // set key
+    //cout << "Please enter a key: ";
+    //cin >> key;
+    enc.setPlainKey("200");
+    enc.process('d');
+
+    // Use steganography to extract current count from image
+    command = "steghide extract -sf " + tempFileDecrypt + " -p 0 -f";
+
+    char* command_char1 = new char[command.length()+1];
+    strcpy(command_char1, command.c_str());
+    system(command_char1);
+
+    //set count
+    ofstream of;
+    of.open(tempFileDecrypt);
+    of<<count;
+
+    // Use steganography to hide count in image
+    command = "steghide embed -ef " + tempFileDecrypt + " -cf " + path + " -p 0 -f";
+
+    if(remove(tempFileDecrypt.c_str())!=0)cout<<"Couldn't delete file\n";
+
+    char* command_char2 = new char[command.length()+1];
+    strcpy(command_char2, command.c_str());
+    system(command_char2);
+
+    // set files
+    enc.setInFile(inPath);
+    enc.setOutFile(oPath);
+
+    // set key
+    //cout << "Please enter a key: ";
+    //cin >> key;
+    enc.setPlainKey("200");
+
+    // do the actual encryption
+    enc.process('e');
+
+    command = "steghide embed -ef ./." + outPath + ".txt -cf default.jpg -sf " + path + ".jpg -p 0 -f";
+
+    char* command_char3 = new char[command.length()+1];
+    strcpy(command_char3, command.c_str());
+    system(command_char3);
 }
+
 
 int ImageData::getCount()
 {
     int count;
+    string tempFileDecrypt = path + "_decrypt.txt";
+    string outPath = path + "_encrypt.txt";
+    encryptJpeg enc;
 
-    // Use steganography to extract count from image
-    string command = "steghide extract -sf " + name + " -p 0 -f";
+    char* fileDecrypt = new char[tempFileDecrypt.length()+1];
+    char* inPath = new char[path.length()+1];
+    char* oPath = new char[outPath.length() + 1];
+
+    strcpy(fileDecrypt, tempFileDecrypt.c_str());
+    strcpy(inPath, path.c_str());
+    strcpy(oPath, outPath.c_str());
+
+    // Use steganography to extract the encrypted file
+    string command =  "steghide extract -sf " + path + " -p 0 -f";
 
     char* command_char = new char[command.length()+1];
     strcpy(command_char, command.c_str());
     system(command_char);
 
-    string tempFile = "." + name + "_TEMP.txt";
-    ifstream in;
-    in.open(tempFile);
-    in>>count;
-    if(remove(tempFile.c_str())!=0)cout<<"Couldn't delete file\n";
+    //Decrypt
+    enc.setInFile(inPath);
+    enc.setOutFile(fileDecrypt);
+    // set key
+    //cout << "Please enter a key: ";
+    //cin >> key;
+    enc.setPlainKey("200");
+    enc.process('d');
+
+    // Use steganography to extract current count from image
+    command = "steghide extract -sf " + tempFileDecrypt + " -p 0 -f";
+
+    char* command_char1 = new char[command.length()+1];
+    strcpy(command_char1, command.c_str());
+    system(command_char1);
+
+    //get count
+    ifstream myInputFile;
+    myInputFile.open(tempFileDecrypt);
+    myInputFile >> count;
+
+    // Use steganography to hide count in image
+    command = "steghide embed -ef " + tempFileDecrypt + " -cf " + path + " -p 0 -f";
+
+    if(remove(tempFileDecrypt.c_str())!=0)cout<<"Couldn't delete file\n";
+
+    char* command_char2 = new char[command.length()+1];
+    strcpy(command_char2, command.c_str());
+    system(command_char2);
+
+    // set files
+    enc.setInFile(inPath);
+    enc.setOutFile(oPath);
+
+    // set key
+    //cout << "Please enter a key: ";
+    //cin >> key;
+    enc.setPlainKey("200");
+
+    // do the actual encryption
+    enc.process('e');
+
+    command = "steghide embed -ef ./." + outPath + ".txt -cf default.jpg -sf " + path + ".jpg -p 0 -f";
+
+    char* command_char3 = new char[command.length()+1];
+    strcpy(command_char3, command.c_str());
+    system(command_char3);
+
     return count;
 }
 
@@ -173,6 +284,14 @@ bool ImageData::unFlatten(string s)
     system(command_char);
 
     return true;
+}
+
+string ImageData::getPath(){
+    return path;
+}
+
+void ImageData::setPath(string path){
+    this->path = path;
 }
 
 ImageData::~ImageData(){}
