@@ -155,6 +155,11 @@ std::set<string>  Peer::getUserImages(string username)
 
 }
 
+void Peer::setLocalImages(std::set<string> arg)
+{
+    localImages=arg;
+}
+
 bool Peer::login(string username, string password)
 {
 	Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);

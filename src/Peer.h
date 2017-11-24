@@ -74,6 +74,7 @@ class Peer
         void sendImage(string name, string IP, int port);
         std::set<string> getMyImages();
         std::set<string> getUserImages(string username);
+        void setLocalImages(std::set<string>);
         bool login(string username, string password);
         void execute(Message msg);
 
