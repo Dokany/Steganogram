@@ -551,7 +551,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 			string name=currentOnlineUsers[m.getOwnerIP()].first;
             name+='_';
             name+=id.getName();
-			string path= "/Images/"+name;
+            string path= "/.Shared/"+name;
 			out.open(path);
 			string iim=id.getImage();
 
