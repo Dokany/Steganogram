@@ -27,6 +27,7 @@ bool StatusData::Flatten()
 	flattened="";
 	for(pair<string,pair<string,int> > p:onlineUsers)
 	{
+		flattened+=seperator;
 		flattened+=p.first;
 		flattened+=seperator;
 		flattened+=p.second.first;
