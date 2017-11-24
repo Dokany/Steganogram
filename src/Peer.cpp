@@ -180,14 +180,6 @@ bool Peer::login(string username, string password)
     return logged_in;
 }
 
-int Peer::extract(string path)
-{
-
-
-    int cnt;
-
-    return cnt;
-}
 
 void Peer::ping()
 {
@@ -464,7 +456,7 @@ void Peer::receiveHandler(string message_id, int timeout)
     {
         //if not send a neg ack
         Message neg(NegAck, myIP,myPort,targetIP, targetPort);
-        AckData nd(_NegAck, segmentTable[message_id].back().getID());
+        AckData nd(_NegAck, message_id);
         neg.setData(nd);
         neg.Flatten();
         char *hn = new char[targetIP.length() + 1];
@@ -490,7 +482,7 @@ void Peer::receiveHandler(string message_id, int timeout)
         {
 
             Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-            AckData ad(_Ack, segmentTable[message_id].back().getID());
+            AckData ad(_Ack, message_id);
             ackMessage.setData(ad);
             ackMessage.Flatten();
             char *hn = new char[targetIP.length() + 1];
@@ -562,7 +554,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 
             //cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
             out<<iim;
-            int count = extract(path);
+            int count = id.getCount();
             imageStatus[name]=count;
             out.close();
             break;
@@ -614,8 +606,12 @@ void Peer::handleReceivedMessage(Message m, string id)
 
             //POP UP WINDOW
 
-            bool accept;
-            if(accept)
+             string user = currentOnlineUsers[m.getOwnerIP()].first;
+            string request = "User "+user+" has requested access to you image list, do you accept?\n";
+            string title = "Image List Request Received";
+
+            auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
+            if(accept==QMessageBox::Yes)
             {
                 Message reply(ImageListReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
                 ImageListData ild;
@@ -636,11 +632,41 @@ void Peer::handleReceivedMessage(Message m, string id)
             break;
          }
 
-//         case ImageRequest:
-//         {
+         case ImageRequest:
+         {
+            ImageRequestData rd;
+            rd.unFlatten(data);
+            string name=rd.getImageName();
+            string user = currentOnlineUsers[m.getOwnerIP()].first;
+            char c;
+            ifstream in;
 
-//            break;
-//         }
+            //POP UP
+            string request = "User "+user+" has requested access to "+name+ ", do you accept?\n";
+            string title = "Image Request Received";
+
+            auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
+            if(accept==QMessageBox::Yes)
+            {
+                ImageData id(name,"Images/"+name,5);
+                Message reply(ImageReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
+                reply.setData(id);
+                reply.Flatten();
+                execute(reply);
+            }
+            else
+            {
+                Message neg(NegAck, myHostname,myPort,m.getOwnerIP(), m.getOwnerPort());
+                AckData nd(_NegAck, id);
+                neg.setData(nd);
+                neg.Flatten();
+                char *hn = new char[m.getOwnerIP().length() + 1];
+                memcpy(hn, m.getOwnerIP().c_str(),m.getOwnerIP().length() + 1);
+                sendWithoutWaiting(neg, m.getOwnerPort(),hn);
+            }
+
+            break;
+         }
 //        case ViewsRequest:
 //        {
 
@@ -675,7 +701,10 @@ void Peer::handleReceivedMessage(Message m, string id)
     }
 }
 
-
+void Peer::copyWindow(QMainWindow *q)
+{
+    mw=q;
+}
 int Peer::checkImage(string name, string ip)
 {
     string img_name = currentOnlineUsers[ip].first+'_'+name;
@@ -704,9 +733,9 @@ void Peer::addImage(string name, string path)
 
 
 }
-void Peer::sendImage(string name, string IP, int port)
+void Peer::sendImage(string name, string IP, int port,int count)
 {
-    ImageData id(name,"Images/"+name);
+    ImageData id(name,"Images/"+name,count);
     Message tst(ImageReply, string(myHostname), myPort, IP, port);
     tst.setData(id);
     tst.Flatten();

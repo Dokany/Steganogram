@@ -41,7 +41,11 @@ SOURCES += \
     Server.cpp \
     Service.cpp \
     StatusData.cpp \
-    UDPSocket.cpp
+    UDPSocket.cpp \
+    imageviewer.cpp \
+    accessjpeg.cpp \
+    aesencrypt.cpp \
+    encryptjpeg.cpp
 
 HEADERS += \
         loginwindow.h \
@@ -60,11 +64,16 @@ HEADERS += \
     Server.h \
     Service.h \
     StatusData.h \
-    UDPSocket.h
+    UDPSocket.h \
+    imageviewer.h \
+    accessjpeg.h \
+    aesencrypt.h \
+    encryptjpeg.h
 
 FORMS += \
         loginwindow.ui \
-    userwindow.ui
+    userwindow.ui \
+    imageviewer.ui
 
 DISTFILES += \
     cat.jpg \

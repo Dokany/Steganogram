@@ -3,13 +3,14 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QThread>
+#include <iostream>
 
 LoginWindow::LoginWindow(QWidget *parent, Peer &p) :
     QMainWindow(parent),
     ui(new Ui::LoginWindow)
 {
     ui->setupUi(this);
-    QPixmap pix("/home/saraseleem/Desktop/Steganogram/Steganogram/logo.png");
+    QPixmap pix("/home/saraseleem/Downloads/Steganogram/Steganogram/logo.png");
     ui->LogoLabel->setPixmap(pix.scaled(100,100,Qt::KeepAspectRatio));
     ui->authError->hide();
     peer=&p;
@@ -28,8 +29,9 @@ void LoginWindow::on_LoginButton_clicked()
     if (peer->login(username.toStdString(),password.toStdString())) {
         //QMessageBox::information(this, "Login", "Username and password are correct");
         hide();
+        std::cout << "login sucessfully\n";
         userWindow = new UserWindow(this, *peer);
-
+        std::cout << "call user window\n";
         userWindow->show();
     }
 

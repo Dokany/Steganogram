@@ -33,7 +33,7 @@ ImageData::ImageData(string name, string path, int count)
     strcpy(command_char, command.c_str());
     system(command_char);
 
-    if(remove(tempFile)!=0)cout<<"Couldn't delete file\n";
+    if(remove(tempFile.c_str())!=0)cout<<"Couldn't delete file\n";
     // set files
     enc.setInFile(inputPath);
     enc.setOutFile(outPath);
@@ -76,7 +76,7 @@ void ImageData::setCount(int count)
     strcpy(command_char, command.c_str());
     system(command_char);
 
-    if(remove(tempFile)!=0)cout<<"Couldn't delete file\n";
+    if(remove(tempFile.c_str())!=0)cout<<"Couldn't delete file\n";
 }
 
 int ImageData::getCount()
@@ -94,7 +94,7 @@ int ImageData::getCount()
     ifstream in;
     in.open(tempFile);
     in>>count;
-    if(remove(tempFile)!=0)cout<<"Couldn't delete file\n";
+    if(remove(tempFile.c_str())!=0)cout<<"Couldn't delete file\n";
     return count;
 }
 
@@ -141,9 +141,7 @@ string ImageData::getName()
 bool ImageData::Flatten()
 {
     flattened="";
-    flattened+=name;
-    flattened+=seperator;
-    flattened+=to_string(count);
+    flattened+=name;;
     flattened+=seperator;
     flattened+=image;
     return true;
@@ -158,8 +156,6 @@ bool ImageData::unFlatten(string s)
     stringstream ss(s);
     string tmp;
     ss>>name;
-    ss>>tmp;
-    count=stoi(tmp);
     image="";
     char c;
 

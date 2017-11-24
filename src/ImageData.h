@@ -1,5 +1,10 @@
 #include "Data.h"
+#include "encryptjpeg.h"
+#include "aesencrypt.h"
 #include <fstream>
+#include <string>
+#include <cstring>
+#include <iostream>
 using namespace std;
 #ifndef IMAGEDATA_H
 #define IMAGEDATA_H

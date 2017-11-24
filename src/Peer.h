@@ -9,6 +9,10 @@
 #include <atomic>
 #include <set>
 #include <condition_variable>
+#include <QtCore>
+#include <QtGui>
+#include <QMessageBox>
+#include <QMainWindow>
 
 #ifndef PEER_H
 #define PEER_H
@@ -62,6 +66,7 @@ class Peer
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
+        QMainWindow *mw;
 
     public:
         Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
@@ -72,12 +77,14 @@ class Peer
         void start();
         int checkImage(string name, string ip);
         void addImage(string name, string path);
-        void sendImage(string name, string IP, int port);
+        void sendImage(string name, string IP, int port, int count);
         std::set<string> getMyImages();
         std::set<string> getUserImages(string username);
         void setLocalImages(std::set<string>);
         bool login(string username, string password);
         void execute(Message msg);
+        void copyWindow(QMainWindow *q);
+
 
         void halt();
 
