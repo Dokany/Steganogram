@@ -134,6 +134,27 @@ Peer& operator=(const Peer& other)
     pendingImageOwners = other.pendingImageOwners;
 }
 */
+
+std::set<string> Peer::getMyImages()
+{
+    return localImages;
+}
+
+std::set<string>  Peer::getUserImages(string username)
+{
+    std::set<string> ret;
+    Message req(ImageListRequest,string(myHostname),myPort, nameToAddress[username].first, nameToAddress[username].second);
+    req.Flatten();
+    execute(req);
+    waiting =true;
+    while(waiting);
+
+    ret= currentImageListReply;
+    currentImageListReply.clear();
+    return ret;
+
+}
+
 bool Peer::login(string username, string password)
 {
 	Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
@@ -148,7 +169,7 @@ bool Peer::login(string username, string password)
 	m.Flatten();
     execute(m);
     waiting = true;
-   // cout<<"Waiting is "<<waiting<<endl;
+    //cout<<"Waiting is "<<waiting<<endl;
     while(waiting);
 
     return logged_in;
@@ -545,6 +566,7 @@ void Peer::handleReceivedMessage(Message m, string id)
 			cout<<"Received online users: \n";
 			vector<pair<string,pair<string, int> > > list = sd.getOnlineUsers();
 			currentOnlineUsers.clear();
+            nameToAddress.clear();
 			for(pair<string,pair<string, int> > t:list)
 			{
 				string name = t.first;
@@ -553,6 +575,8 @@ void Peer::handleReceivedMessage(Message m, string id)
 				cout<<name<<" "<<address<<" "<<port<<endl;
 				currentOnlineUsers[address].first = name;
 				currentOnlineUsers[address].second = port;
+                nameToAddress[name].first=address;
+                nameToAddress[name].second = port;
 			}
 			cout<<endl;
 			break;
@@ -567,38 +591,63 @@ void Peer::handleReceivedMessage(Message m, string id)
 			vector<string> list = ild.getImageList();
 			for(string t:list)
 			{
-				cout<<t<<endl;
+                currentImageListReply.insert(t);
 			}
 
-			cout<<endl;
+            waiting=false;
 			break;
 
 		}
-		//TO BE IMPLEMENTED AFTER STEGANOGRAPHY
-		// case ImageListRequest:
-		// {
+       // TO BE IMPLEMENTED AFTER STEGANOGRAPHY
+         case ImageListRequest:
+         {
 
-		// 	break;
-		// }
-		// case ViewsRequest:
-		// {
+            //POP UP WINDOW
 
-		// 	break;
-		// }
-		// case DenyRequest
-		// {
+            bool accept;
+            if(accept)
+            {
+                Message reply(ImageListReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
+                ImageListData ild;
+                for(std::set<string>::iterator it=localImages.begin();it!=localImages.end();++it)
+                {
+                    ild.addImage(*it);
+                }
+                reply.setData(ild);
+                reply.Flatten();
+                execute(reply);
+            }
+            else
+            {
+                Message reply(DenyRequest, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
+                reply.Flatten();
+                execute(reply);
+            }
+            break;
+         }
 
-		// 	break;
-		// }
-		// case ImageRequest:
-		// {
+//         case ImageRequest:
+//         {
 
-		// 	break;
-		// }
-		// case ViewsReply: 
-		// {
-		// 	break;
-		// }
+//            break;
+//         }
+//        case ViewsRequest:
+//        {
+
+//           break;
+//        }
+    case DenyRequest:
+        {
+            //POP UP WINDOW DENIED!
+            waiting=false;
+           cout<<"User "<<currentOnlineUsers[m.getOwnerIP()].first<<" has denied your request \n";
+
+           break;
+        }
+//         case ViewsReply:
+//         {
+//            break;
+//         }
 
 		//to be added to Service and removed from here
 		/*

@@ -40,10 +40,11 @@ class Peer
         std::map<string,bool> receivedMessageHistory;
 
         string auth_id;
+        std::map<string,pair<string,int> > nameToAddress;
         std::map<string,pair<string,int> > currentOnlineUsers;
         std::map<string,vector<string>> currentImageViewers;
         std::map<string,int> imageStatus;
-        std::set<string> localImages;
+        std::set<string> localImages, currentImageListReply;
         std::map<string,string> pendingImageOwners; //messageid and user to add to currentImageViewers
 
         const int max_size = 50000;
@@ -71,6 +72,8 @@ class Peer
         int checkImage(string name, string ip);
         void addImage(string name, string path);
         void sendImage(string name, string IP, int port);
+        std::set<string> getMyImages();
+        std::set<string> getUserImages(string username);
         bool login(string username, string password);
         void execute(Message msg);
 
