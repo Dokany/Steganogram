@@ -160,22 +160,12 @@ width:20px;
     <property name="title">
      <string>Online Users </string>
     </property>
-    <widget class="QListView" name="usersList">
+    <widget class="QListWidget" name="usersWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>101</width>
-       <height>341</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QListWidget" name="usersWidget">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>30</y>
-       <width>81</width>
+       <width>201</width>
        <height>341</height>
       </rect>
      </property>
@@ -226,7 +216,7 @@ width:20px;
       <x>10</x>
       <y>40</y>
       <width>401</width>
-      <height>381</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="title">
@@ -238,7 +228,7 @@ width:20px;
        <x>10</x>
        <y>31</y>
        <width>381</width>
-       <height>341</height>
+       <height>151</height>
       </rect>
      </property>
     </widget>
@@ -255,6 +245,29 @@ width:20px;
     <property name="text">
      <string>Refresh</string>
     </property>
+   </widget>
+   <widget class="QGroupBox" name="sharedList">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>230</y>
+      <width>401</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Shared Images</string>
+    </property>
+    <widget class="QListWidget" name="sharedWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>31</y>
+       <width>381</width>
+       <height>151</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

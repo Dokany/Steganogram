@@ -2,7 +2,6 @@
 #define LOGINWINDOW_H
 
 #include <QMainWindow>
-#include "Peer.h"
 #include "userwindow.h"
 
 namespace Ui {

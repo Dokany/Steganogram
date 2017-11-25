@@ -46,6 +46,7 @@ void LoginWindow::reset()
     ui->UsernameLineEdit->clear();
     ui->PasswordLineEdit->clear();
     ui->authError->hide();
+
 }
 
 LoginWindow::~LoginWindow()
