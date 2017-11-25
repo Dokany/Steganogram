@@ -299,7 +299,7 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
                 {
                     cout<<cstr[i];
                 }cout<<endl;*/
-                while((udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname))<0);
+                udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname);
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             messageSentStatus[msg_id]=sending;
@@ -447,7 +447,7 @@ void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
         string temp = mm.getFlattenedMessage();
         char *msg = new char[temp.length() + 1];
         strcpy(msg, temp.c_str());
-        while((udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname)<0));
+        udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname);
     }
 }
 
@@ -497,7 +497,7 @@ void Peer::receiveHandler(string message_id, int timeout)
         //cout<<"defraggedMessage data size: "<<size<<endl;
         //send ack
         MessageType mmt = defraggedMessage.getType();
-        if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
+        if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate && mmt!=ImageRequest && mmt!=StatusReply && mmt!=ImageListRequest && mmt!=ViewsRequest)
         {
 
             Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
@@ -756,6 +756,7 @@ void Peer::handleReceivedMessage(Message m, string id)
         {
             if(!logged_in)return;
             perror("Unknown type received\n");
+            break;
         }
     }
 }
