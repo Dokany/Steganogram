@@ -74,7 +74,7 @@ class Peer : public QObject
 
 
     signals:
-
+        void terminateProgram();
         void firstWindow();
     public:
         Peer();
