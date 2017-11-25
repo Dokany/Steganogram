@@ -5,6 +5,7 @@
 #include <string>
 #include <QDialog>
 #include "Peer.h"
+#include <QListWidgetItem>
 
 namespace Ui {
 class ImageList;
@@ -15,11 +16,12 @@ class ImageList : public QDialog
     Q_OBJECT
 
 public:
-    explicit ImageList(QWidget *parent = 0);
+    explicit ImageList(QWidget *parent, Peer &p, std::string username);
+    void viewImageListWidget();
     ~ImageList();
 
 private slots:
-    void on_imageListWidget_itemClicked(QListWidgetItem *item, Peer &p, std::string username);
+    void on_imageListWidget_itemClicked(QListWidgetItem *item);
 
 private:
     std::set<std::string> imageList;

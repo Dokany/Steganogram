@@ -1,5 +1,6 @@
 #include "imagelist.h"
 #include "ui_imagelist.h"
+#include<QMessageBox>
 
 ImageList::ImageList(QWidget *parent, Peer &p, std::string username) :
     QDialog(parent),
@@ -21,12 +22,12 @@ void ImageList:: viewImageListWidget()
 {
     // Viewing Image List Entries
 
-    for (std::string& a: imageList) {
+    for (auto& a: imageList) {
 
-        ui->imageWidget->addItem(QString::fromStdString(a));
+        ui->imageListWidget->addItem(QString::fromStdString(a));
     }
 
-    ui->imageWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->imageListWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 void ImageList::on_imageListWidget_itemClicked(QListWidgetItem *item)

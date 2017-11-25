@@ -306,7 +306,7 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
 
 void UserWindow::on_usersWidget_itemClicked(QListWidgetItem *item)
 {
-    il = new ImageList(this, *p, (item->text).toStdString());
+    il = new ImageList(this, *p, (item->text()).toStdString());
     il->show();
 }
 
