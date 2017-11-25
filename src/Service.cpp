@@ -54,7 +54,6 @@ else cout << "Unable to open file\n";
 
 	sendMain();
 	receiveMain();
-	main_refresh = thread(&Service::pingRefresh,this);
 	// main_receive = thread(&Peer::receiveMain,this);
 	// main_send = thread(&Peer::sendMain,this);	
 	// receiving messages thread
@@ -564,6 +563,11 @@ void Service::terminateUsers()
 	}
 }
 Service::~Service(){
+
+cout<<"Service destructor\n";
+delete udpSocket_server;
+delete udpSocket_client;
+delete myHostname;
 
 	// listening = false;
 
