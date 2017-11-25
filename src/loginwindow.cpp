@@ -10,10 +10,10 @@ LoginWindow::LoginWindow(QWidget *parent) :
     ui(new Ui::LoginWindow)
 {
     ui->setupUi(this);
-    QPixmap pix("/home/saraseleem/Desktop/Steganogram/Steganogram/logo.png");
+    QPixmap pix("/home/saraseleem/Desktop/Steganogram-master_qt/src/logo.png");
     ui->LogoLabel->setPixmap(pix.scaled(100,100,Qt::KeepAspectRatio));
     ui->authError->hide();
-    peer = new Peer("10.7.57.229",4444,"10.7.57.200",4444);
+    peer = new Peer("10.7.57.15",4444,"10.7.57.200",4444);
   //  peer=&p;
     this->setAttribute( Qt::WA_QuitOnClose, false );
 }

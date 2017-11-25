@@ -23,9 +23,11 @@ public:
     ~UserWindow();
 
     QStringList list, list_2;
-    void updateOnlineList();
+   // void updateOnlineList();
+    void updateOnlineWidget();
     void myImageListView();
     void viewImageWidget();
+    void viewSharedWidget();
 
 private slots:
     void on_uploadButton_clicked();
@@ -33,6 +35,8 @@ private slots:
     void on_LogoutButton_clicked();
 
     void on_RefreshButton_clicked();
+
+    void on_sharedWidget_itemClicked(QListWidgetItem *item);
 
 private:
     std::atomic<bool> working;
