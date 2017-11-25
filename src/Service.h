@@ -20,7 +20,7 @@ class Service
         UDPSocket * udpSocket_client;
         UDPSocket * udpSocket_server;
 
-        thread main_send, main_receive, main_listen;
+        thread main_send, main_receive, main_listen, main_refresh;
         int myPort;
         char * myHostname;
 

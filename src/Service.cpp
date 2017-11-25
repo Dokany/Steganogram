@@ -52,7 +52,7 @@ else cout << "Unable to open file\n";
 
 	sendMain();
 	receiveMain();
-	pingRefresh();
+	main_refresh = thread(&Service::pingRefresh,this);
 	// main_receive = thread(&Peer::receiveMain,this);
 	// main_send = thread(&Peer::sendMain,this);	
 	// receiving messages thread
@@ -91,9 +91,9 @@ void Service::sendMain()
 					//cout << std::this_thread::get_id() << "\t Sending message from IP: " << myHostname <<" : "<<myPort << endl;
 					requests.pop();
 					lck.unlock();
-					sendHandler(msg, msg.getTargetPort(), IP, 75);
+					sendHandler(msg, msg.getTargetPort(), IP, 20);
 
-					cout << "Message Sent Handled.\n";
+					//cout << "Message Sent Handled.\n";
 					//std::this_thread::sleep_for(std::chrono::seconds(10));
 							// release lck
 				}
@@ -120,6 +120,7 @@ bool Service::authenticate(string username, string password, string IP, int port
 			online_directory[username] = time(NULL);
 			online_list[username].first = IP;
 			online_list[username].second = port;
+			cout<<username<<" ADDDDDDDDDDDDDDDDDEDDDDD" <<online_list.size()<<endl;
 			return true;
 		}
 
@@ -139,11 +140,8 @@ bool Service::authenticate(string username, string password, string IP, int port
 
 void Service::pingHandler(string username)
 {
-	auto search = online_directory.find(username);
-	time_t current_time = time(NULL);
-	if(search != online_directory.end())
-		//username online
-		search->second = current_time;
+	cout<<"~~~~~~~~~~~~~~~~~~~~MODIFYING "<<username<<" : "<<time(NULL)<<endl;
+	online_directory[username]=time(NULL);
 }
 
 void Service::pingRefresh()
@@ -152,16 +150,20 @@ void Service::pingRefresh()
 	    //cout << "ping thread\n";
 	    while(listening)
 	    {
-		    time_t current_time;
-		    time(&current_time);
+		    //time(&current_time);
 
 		    for (auto &a : online_directory) 
 				{
-					if (abs(a.second - current_time) > 600)
-					{
+					// cout<<"~~~~~~~~~~~~~~~~ User is "<<a.first<<" elapsed:"<<abs(a.second -  time(NULL))<<endl;
+					if (abs(a.second -  time(NULL)) > 40)
+					{	cout<<"**********40 SECONDS PASSED ******"<<endl;
+						cout<<a.first<<" removed"<<endl;
+
 						online_directory.erase(a.first);
 						online_list.erase(a.first);
+
 					}
+
 				}
 		}
     });
@@ -204,7 +206,7 @@ void Service::sendHandler(Message msg, int port, char *hostname, int timeout)
 				{
 					cout<<cstr[i];
 				}cout<<endl;*/
-				while((udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname))<0);
+				udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname);
 				std::this_thread::sleep_for(std::chrono::milliseconds(10));
 			}
 			messageSentStatus[msg_id]=sending;
@@ -341,7 +343,7 @@ void Service::sendWithoutWaiting(Message m, int port, char *hostname)
 		string temp = mm.getFlattenedMessage();
 		char *msg = new char[temp.length() + 1];
 		strcpy(msg, temp.c_str());
-		while((udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname)<0));
+		udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname);
 	}
 }
 
@@ -369,7 +371,7 @@ void Service::receiveHandler(string message_id, int timeout)
 	{
 		//if not send a neg ack
 		Message neg(NegAck, myIP,myPort,targetIP, targetPort);
-        AckData nd(_NegAck,message_id);
+		AckData nd(_NegAck, segmentTable[message_id].back().getID());
 		neg.setData(nd);
 		neg.Flatten();
 		char *hn = new char[targetIP.length() + 1];
@@ -395,7 +397,7 @@ void Service::receiveHandler(string message_id, int timeout)
 		{
 			
 			Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-            AckData ad(_Ack, message_id);
+			AckData ad(_Ack, segmentTable[message_id].back().getID());
 			ackMessage.setData(ad);
 			ackMessage.Flatten();
 			char *hn = new char[targetIP.length() + 1];
@@ -420,11 +422,13 @@ void Service::handleReceivedMessage(Message m, string id)
 	int myPort = m.getTargetPort();
 	string targetIP = m.getOwnerIP();
 	int targetPort = m.getOwnerPort();
-	cout<<to_string(m.getType())<<"--------------------"<<endl;
+	cout<<"Message Type =  " <<to_string(m.getType())<<"--------------------"<<endl;
 	switch(mt)
 	{
 		case Ack:
 		{
+
+			cout<<"~~~~~~~~~ ACK MESSAGE RECIEVED From "<< endl;
 			AckData ad;
 			ad.unFlatten(data);
 			messageSentStatus[ad.getMessageID()]=sent;
@@ -433,6 +437,10 @@ void Service::handleReceivedMessage(Message m, string id)
 		}
 		case NegAck:
 		{
+						
+			cout<<"~~~~~~~~~NEG ACK MESSAGE RECIEVED From "<< endl;
+
+
 			AckData ad;
 			ad.unFlatten(data);
 			messageSentStatus[ad.getMessageID()]=lost;
@@ -440,19 +448,27 @@ void Service::handleReceivedMessage(Message m, string id)
 		}
 		case Ping:
 		{
+
 			PingData pd;
 			pd.unFlatten(data);
 			pingHandler(pd.getUsername());
-			cout<<"STATUS REQUEST RECIEVED :D"<<endl;
+			
+			cout<<"~~~~~~~~~PING MESSAGE RECIEVED From "<< pd.getUsername()<<endl;
+
 			Message reply(StatusReply,myIP,myPort, targetIP, targetPort);
 			StatusData sd;
 			for (auto &a : online_list) 
 			{
+				//cout<<" ADDING USER "<<endl;
 				sd.addUser(a.first, a.second.first, a.second.second);
 			}
+			cout<<"SENT "<<online_list.size()<<endl;
 			reply.setData(sd);
 			reply.Flatten();
-			execute(reply);
+			char *hn = new char[targetIP.length() + 1];
+			
+			memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
+			sendWithoutWaiting(reply,targetPort,hn);
 			
 
 			break;
@@ -461,12 +477,12 @@ void Service::handleReceivedMessage(Message m, string id)
 		{
 			AuthData ad;
 			ad.unFlatten(data);
-			
+			cout<<"~~~~~~~~~AUTHENTICATION MESSAGE RECIEVED From "<< endl;
 			messageSentStatus[id]=sent;
 			if(authenticate(ad.getUsername(),ad.getPassword(), targetIP, targetPort))
 			{
 				Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
-                AckData ad(_Ack, id);
+				AckData ad(_Ack, id);
 				ackMessage.setData(ad);
 				ackMessage.Flatten();
 				char *hn = new char[targetIP.length() + 1];
@@ -477,7 +493,7 @@ void Service::handleReceivedMessage(Message m, string id)
 			else
 			{
 				Message negAckMessage(NegAck, myIP,myPort, targetIP, targetPort);
-                AckData ad(_NegAck, id);
+				AckData ad(_NegAck, id);
 				negAckMessage.setData(ad);
 				negAckMessage.Flatten();
 				char *hn = new char[targetIP.length() + 1];
@@ -522,7 +538,8 @@ void Service::handleReceivedMessage(Message m, string id)
 		
 		default:
 		{
-			perror("Unknown type received\n");
+			perror("Unknown type received ");
+			cout<<mt<<endl;
 			break;
 		}
 	}
