@@ -61,7 +61,7 @@ class Service
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
-
+	void terminateUsers();
     public:
         Service();
         Service(char * _listen_hostname, int _listen_port);
