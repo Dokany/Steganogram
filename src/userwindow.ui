@@ -197,19 +197,6 @@ width:20px;
      <string>Upload</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="RequestsButton">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>0</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Requests</string>
-    </property>
-   </widget>
    <widget class="QGroupBox" name="myImages">
     <property name="geometry">
      <rect>
@@ -236,7 +223,7 @@ width:20px;
    <widget class="QPushButton" name="RefreshButton">
     <property name="geometry">
      <rect>
-      <x>340</x>
+      <x>420</x>
       <y>0</y>
       <width>71</width>
       <height>41</height>
