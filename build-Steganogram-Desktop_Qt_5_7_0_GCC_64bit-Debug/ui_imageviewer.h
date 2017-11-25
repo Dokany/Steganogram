@@ -162,11 +162,11 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         image = new QLabel(centralwidget);
         image->setObjectName(QStringLiteral("image"));
-        image->setGeometry(QRect(0, 0, 521, 401));
+        image->setGeometry(QRect(0, 0, 521, 531));
         countList = new QTableView(centralwidget);
         countList->setObjectName(QStringLiteral("countList"));
         countList->setEnabled(false);
-        countList->setGeometry(QRect(530, 0, 221, 401));
+        countList->setGeometry(QRect(530, 0, 261, 531));
         imageviewer->setCentralWidget(centralwidget);
         menubar = new QMenuBar(imageviewer);
         menubar->setObjectName(QStringLiteral("menubar"));

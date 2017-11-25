@@ -16,7 +16,6 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
-#include <QtWidgets/QListView>
 #include <QtWidgets/QListWidget>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
@@ -32,7 +31,6 @@ public:
     QWidget *centralwidget;
     QLabel *LogoLabel;
     QGroupBox *onlineUserGroup;
-    QListView *usersList;
     QListWidget *usersWidget;
     QPushButton *LogoutButton;
     QPushButton *uploadButton;
@@ -40,6 +38,8 @@ public:
     QGroupBox *myImages;
     QListWidget *imageWidget;
     QPushButton *RefreshButton;
+    QGroupBox *sharedList;
+    QListWidget *sharedWidget;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -177,12 +177,9 @@ public:
         onlineUserGroup = new QGroupBox(centralwidget);
         onlineUserGroup->setObjectName(QStringLiteral("onlineUserGroup"));
         onlineUserGroup->setGeometry(QRect(419, 40, 221, 381));
-        usersList = new QListView(onlineUserGroup);
-        usersList->setObjectName(QStringLiteral("usersList"));
-        usersList->setGeometry(QRect(10, 30, 101, 341));
         usersWidget = new QListWidget(onlineUserGroup);
         usersWidget->setObjectName(QStringLiteral("usersWidget"));
-        usersWidget->setGeometry(QRect(120, 30, 81, 341));
+        usersWidget->setGeometry(QRect(10, 30, 201, 341));
         LogoutButton = new QPushButton(centralwidget);
         LogoutButton->setObjectName(QStringLiteral("LogoutButton"));
         LogoutButton->setGeometry(QRect(579, 0, 61, 41));
@@ -194,13 +191,19 @@ public:
         RequestsButton->setGeometry(QRect(420, 0, 71, 41));
         myImages = new QGroupBox(centralwidget);
         myImages->setObjectName(QStringLiteral("myImages"));
-        myImages->setGeometry(QRect(10, 40, 401, 381));
+        myImages->setGeometry(QRect(10, 40, 401, 181));
         imageWidget = new QListWidget(myImages);
         imageWidget->setObjectName(QStringLiteral("imageWidget"));
-        imageWidget->setGeometry(QRect(10, 31, 381, 341));
+        imageWidget->setGeometry(QRect(10, 31, 381, 141));
         RefreshButton = new QPushButton(centralwidget);
         RefreshButton->setObjectName(QStringLiteral("RefreshButton"));
         RefreshButton->setGeometry(QRect(340, 0, 71, 41));
+        sharedList = new QGroupBox(centralwidget);
+        sharedList->setObjectName(QStringLiteral("sharedList"));
+        sharedList->setGeometry(QRect(10, 230, 401, 191));
+        sharedWidget = new QListWidget(sharedList);
+        sharedWidget->setObjectName(QStringLiteral("sharedWidget"));
+        sharedWidget->setGeometry(QRect(10, 31, 381, 141));
         UserWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(UserWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -225,6 +228,7 @@ public:
         RequestsButton->setText(QApplication::translate("UserWindow", "Requests", 0));
         myImages->setTitle(QApplication::translate("UserWindow", "My Images", 0));
         RefreshButton->setText(QApplication::translate("UserWindow", "Refresh", 0));
+        sharedList->setTitle(QApplication::translate("UserWindow", "Shared Images", 0));
     } // retranslateUi
 
 };
