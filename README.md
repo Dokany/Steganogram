@@ -8,14 +8,14 @@ Image sharing application build using UNIX sockets and UDP to implement Remote I
 - Yasmin ElDokany
 
 ### Dependencies to be installed:
-#### 1. Imagemagick
+#### 1. [Imagemagick]()
 ```
 wget http://www.imagemagick.org/download/ImageMagick.tar.gz
 tar xzvf ImageMagick.tar.gz
 cd ImageMagick/
 ./configure --prefix=/opt/imagemagick && make
 ```
-#### 2. Steghide
+#### 2. [Steghide](http://steghide.sourceforge.net/)
 ```
 sudo apt-get install steghide
 ```
