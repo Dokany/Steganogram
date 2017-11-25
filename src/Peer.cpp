@@ -741,7 +741,7 @@ void Peer::handleReceivedMessage(Message m, string id)
             //POP UP
             string request = "User "+user+" has requested access to "+name+ ", do you accept?\n";
             string title = "Image Request Received";
-             mbox_image_name=name;
+            mbox_image_name=name;
             mbox_request = request;
             mbox_title = title;
             mbox_mt=mt;
@@ -792,6 +792,14 @@ void Peer::handleReceivedMessage(Message m, string id)
         case Ping:
 
         */
+        case Terminate:
+        {
+            logged_in=false;
+            cout<<"before terminate emit\n";
+            emit terminateProgram();
+
+            break;
+        }
         default:
         {
             if(!logged_in)return;

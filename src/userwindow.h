@@ -37,6 +37,7 @@ public:
 
  private slots:
     void handleMBox();
+    void terminateBox();
     void on_uploadButton_clicked();
     void on_imageWidget_itemClicked(QListWidgetItem *item);
     void on_LogoutButton_clicked();
@@ -44,6 +45,7 @@ public:
     void on_RefreshButton_clicked();
 
     void on_sharedWidget_itemClicked(QListWidgetItem *item);
+
 
 private:
     std::atomic<bool> working;

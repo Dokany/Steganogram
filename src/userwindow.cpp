@@ -23,6 +23,7 @@ UserWindow::UserWindow(QWidget *parent, Peer* p) :
     cout << "Beginning: Constructing\n";
     this->p = p;
     connect(this->p,SIGNAL(firstWindow()),SLOT(handleMBox()));
+    connect(this->p,SIGNAL(terminateProgram()),SLOT(terminateBox()));
     cout<<"Copying Peer\n";
     ui->setupUi(this);
     cout<<"Setup UI\n";
@@ -39,7 +40,7 @@ UserWindow::UserWindow(QWidget *parent, Peer* p) :
     cout<<"construction done";
 }
 void UserWindow::handleMBox(){
-    cout<<"HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"<<endl;
+   // cout<<"HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE"<<endl;
     string request = p->getMBoxRequest();
     string title = p->getMBoxTitle();
 
@@ -54,6 +55,12 @@ void UserWindow::handleMBox(){
     }
     p->processReply();
 
+}
+void UserWindow::terminateBox()
+{
+    cout<<"IN TERMINATE WINDOW\n";
+    auto reply = QMessageBox::warning(this,"Main Server closed", "Server closed, shuting down...\n");
+    this->close();
 }
 
 void UserWindow:: viewImageWidget()
@@ -131,7 +138,7 @@ void UserWindow:: viewSharedWidget()
             cout << "FOREACH---------------------------------------------------------\n";
 
             QString tmp = fileinfo.fileName();
-            ui->imageWidget->addItem(tmp);
+            ui->sharedWidget->addItem(tmp);
             std::string tmp2 = tmp.toStdString();
 
             std::cout << tmp2 << std::endl;
