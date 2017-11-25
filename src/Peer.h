@@ -71,8 +71,8 @@ class Peer
     public:
         Peer();
         Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
-        //Peer(const Peer& other);
-        //Peer& operator=(const Peer& other);
+        Peer(const Peer& other);
+        Peer& operator=(const Peer& other);
         std::map<string,pair<string,int> > getStatus();
         vector<pair<string,int> > getCurrentImageViewers(string);
         void start();
@@ -86,9 +86,8 @@ class Peer
         void execute(Message msg);
         void copyWindow(QMainWindow *q);
         void requestImage(string name, string user);
-        void requestViews(string name, string user);
-        void addViews(int count, string image, string user);
         void logOff();
+
         void halt();
 
         ~Peer();

@@ -47,6 +47,8 @@ imageviewer::imageviewer(QWidget *parent, std::string path, bool mine, Peer &p) 
 
     }
 
+    this->setAttribute( Qt::WA_QuitOnClose, false );
+
 }
 
 imageviewer::~imageviewer()

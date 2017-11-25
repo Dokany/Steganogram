@@ -6,8 +6,6 @@
 #include "PingData.h"
 #include "StatusData.h"
 #include "ImageRequestData.h"
-#include "ViewsRequestData.h"
-#include "ViewsReplyData.h"
 #include "ImageData.h"
 #include <sys/types.h>
 #include <sys/socket.h>
