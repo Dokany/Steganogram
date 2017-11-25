@@ -73,6 +73,7 @@ SOURCES       = ../Steganogram/main.cpp \
 		../Steganogram/ViewsRequestData.cpp \
 		../Steganogram/ViewsReplyData.cpp moc_loginwindow.cpp \
 		moc_userwindow.cpp \
+		moc_Peer.cpp \
 		moc_imageviewer.cpp
 OBJECTS       = main.o \
 		loginwindow.o \
@@ -100,6 +101,7 @@ OBJECTS       = main.o \
 		ViewsReplyData.o \
 		moc_loginwindow.o \
 		moc_userwindow.o \
+		moc_Peer.o \
 		moc_imageviewer.o
 DIST          = ../Steganogram/cat.jpg \
 		../Steganogram/dog_b.jpg \
@@ -663,9 +665,9 @@ benchmark: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_loginwindow.cpp moc_userwindow.cpp moc_imageviewer.cpp
+compiler_moc_header_make_all: moc_loginwindow.cpp moc_userwindow.cpp moc_Peer.cpp moc_imageviewer.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_loginwindow.cpp moc_userwindow.cpp moc_imageviewer.cpp
+	-$(DEL_FILE) moc_loginwindow.cpp moc_userwindow.cpp moc_Peer.cpp moc_imageviewer.cpp
 moc_loginwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmainwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qwidget.h \
@@ -766,23 +768,9 @@ moc_loginwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qicon.h \
-		../Steganogram/Peer.h \
-		../Steganogram/Message.h \
-		../Steganogram/AuthData.h \
-		../Steganogram/Data.h \
-		../Steganogram/ImageListData.h \
-		../Steganogram/AckData.h \
-		../Steganogram/PingData.h \
-		../Steganogram/StatusData.h \
-		../Steganogram/ImageRequestData.h \
-		../Steganogram/ImageData.h \
-		../Steganogram/encryptjpeg.h \
-		../Steganogram/accessjpeg.h \
-		../Steganogram/aesencrypt.h \
-		../Steganogram/ViewsRequestData.h \
-		../Steganogram/ViewsReplyData.h \
-		../Steganogram/UDPSocket.h \
-		../Steganogram/PackGen.h \
+		../Steganogram/userwindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCore \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCoreDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractanimation.h \
@@ -893,8 +881,6 @@ moc_loginwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qversionnumber.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qxmlstream.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtcoreversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessible.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessiblebridge.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessibleobject.h \
@@ -989,10 +975,6 @@ moc_loginwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
-		../Steganogram/userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
@@ -1007,10 +989,30 @@ moc_loginwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
 		../Steganogram/imageviewer.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../Steganogram/Peer.h \
+		../Steganogram/Message.h \
+		../Steganogram/AuthData.h \
+		../Steganogram/Data.h \
+		../Steganogram/ImageListData.h \
+		../Steganogram/AckData.h \
+		../Steganogram/PingData.h \
+		../Steganogram/StatusData.h \
+		../Steganogram/ImageRequestData.h \
+		../Steganogram/ImageData.h \
+		../Steganogram/encryptjpeg.h \
+		../Steganogram/accessjpeg.h \
+		../Steganogram/aesencrypt.h \
+		../Steganogram/ViewsRequestData.h \
+		../Steganogram/ViewsReplyData.h \
+		../Steganogram/UDPSocket.h \
+		../Steganogram/PackGen.h \
 		../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/bin/moc
 	/home/saraseleem/Qt5.7.0/5.7/gcc_64/bin/moc $(DEFINES) -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/mkspecs/linux-g++ -I/home/saraseleem/Desktop/Steganogram/Steganogram -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtWidgets -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtGui -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Steganogram/loginwindow.h -o moc_loginwindow.cpp
@@ -1321,6 +1323,27 @@ moc_userwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qframe.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qslider.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
+		../Steganogram/imageviewer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
 		../Steganogram/Peer.h \
 		../Steganogram/Message.h \
 		../Steganogram/AuthData.h \
@@ -1338,30 +1361,330 @@ moc_userwindow.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../Steganogram/ViewsReplyData.h \
 		../Steganogram/UDPSocket.h \
 		../Steganogram/PackGen.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemview.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qframe.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyleoption.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qslider.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractslider.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
-		../Steganogram/imageviewer.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
 		../Steganogram/userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/bin/moc
 	/home/saraseleem/Qt5.7.0/5.7/gcc_64/bin/moc $(DEFINES) -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/mkspecs/linux-g++ -I/home/saraseleem/Desktop/Steganogram/Steganogram -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtWidgets -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtGui -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Steganogram/userwindow.h -o moc_userwindow.cpp
+
+moc_Peer.cpp: ../Steganogram/Message.h \
+		../Steganogram/AuthData.h \
+		../Steganogram/Data.h \
+		../Steganogram/ImageListData.h \
+		../Steganogram/AckData.h \
+		../Steganogram/PingData.h \
+		../Steganogram/StatusData.h \
+		../Steganogram/ImageRequestData.h \
+		../Steganogram/ImageData.h \
+		../Steganogram/encryptjpeg.h \
+		../Steganogram/accessjpeg.h \
+		../Steganogram/aesencrypt.h \
+		../Steganogram/ViewsRequestData.h \
+		../Steganogram/ViewsReplyData.h \
+		../Steganogram/UDPSocket.h \
+		../Steganogram/PackGen.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCore \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCoreDepends \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractanimation.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectdefs.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qnamespace.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qglobal.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qconfig.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfeatures.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsystemdetection.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qprocessordetection.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtypeinfo.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtypetraits.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qisenum.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsysinfo.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlogging.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qflags.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbasicatomic.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qgenericatomic.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qglobalstatic.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmutex.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qnumeric.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qversiontagging.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstring.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qchar.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearray.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qrefcount.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qarraydata.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstringbuilder.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlist.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qalgorithms.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qiterator.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qhashfunctions.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qpair.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearraylist.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstringlist.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qregexp.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstringmatcher.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcoreevent.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qscopedpointer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmetatype.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qobject_impl.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qanimationgroup.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qparallelanimationgroup.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qpauseanimation.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qpropertyanimation.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qvariantanimation.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qeasingcurve.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qvector.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qpoint.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qvariant.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmap.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qdebug.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qhash.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtextstream.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qiodevice.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlocale.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qshareddata.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qset.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsequentialanimationgroup.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtextcodec.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qendian.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlibraryinfo.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qdatetime.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbuffer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qdatastream.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qdir.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfileinfo.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfile.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfiledevice.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qdiriterator.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfileselector.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QObject \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QStringList \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfilesystemwatcher.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlockfile.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qloggingcategory.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qprocess.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qresource.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsavefile.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsettings.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstandardpaths.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstorageinfo.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtemporarydir.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QScopedPointer \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtemporaryfile.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qurl.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qurlquery.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractitemmodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractproxymodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qidentityproxymodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qitemselectionmodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsortfilterproxymodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstringlistmodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qjsonarray.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qjsonvalue.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qjsondocument.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qjsonobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstracteventdispatcher.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qeventloop.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractnativeeventfilter.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbasictimer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcoreapplication.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmath.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmetaobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmimedata.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qobjectcleanuphandler.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qpointer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsharedmemory.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsignalmapper.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsocketnotifier.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsystemsemaphore.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtimer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtranslator.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qwineventnotifier.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmimedatabase.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmimetype.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfactoryinterface.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlibrary.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qplugin.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qpluginloader.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/quuid.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractstate.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstracttransition.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qeventtransition.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfinalstate.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qhistorystate.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsignaltransition.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstate.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstatemachine.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qexception.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfuture.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfutureinterface.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qrunnable.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qresultstore.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfuturesynchronizer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qfuturewatcher.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qreadwritelock.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsemaphore.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qthread.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qthreadpool.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qthreadstorage.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qwaitcondition.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qarraydataops.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qarraydatapointer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbitarray.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qbytearraymatcher.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcache.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcollator.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcommandlineoption.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcommandlineparser.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qcryptographichash.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qelapsedtimer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qline.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qlinkedlist.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmargins.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qmessageauthenticationcode.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qqueue.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qrect.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qsize.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qregularexpression.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qscopedvaluerollback.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qstack.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtextboundaryfinder.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtimeline.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtimezone.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qversionnumber.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qxmlstream.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtcoreversion.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessible.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qcolor.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qrgb.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qrgba64.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qevent.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qwindowdefs.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qregion.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qkeysequence.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvector2d.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtouchdevice.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessiblebridge.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessibleobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessibleplugin.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qbitmap.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpixmap.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintdevice.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qimage.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpixelformat.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtransform.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qmatrix.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpolygon.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpainterpath.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qicon.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qiconengine.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qiconengineplugin.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qimageiohandler.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qimagereader.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qimagewriter.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qmovie.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpicture.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpictureformatplugin.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpixmapcache.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qstandarditemmodel.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qbrush.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qfont.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qclipboard.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qcursor.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdrag.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qgenericplugin.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qgenericpluginfactory.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qguiapplication.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qinputmethod.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qoffscreensurface.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qsurface.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qsurfaceformat.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglcontext.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QSurfaceFormat \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopengl.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qt_windows.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopengles2ext.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglext.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglversionfunctions.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglwindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QPaintDeviceWindow \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintdevicewindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QWindow \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qwindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QEvent \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QMargins \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QRect \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QPaintDevice \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QOpenGLContext \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QImage \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpalette.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qrasterwindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qscreen.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QList \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QSize \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QSizeF \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QTransform \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qsessionmanager.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qstylehints.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qgenericmatrix.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qmatrix4x4.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvector3d.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvector4d.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qquaternion.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglbuffer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopengldebug.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglextrafunctions.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglfunctions.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglframebufferobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglpaintdevice.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglpixeltransferoptions.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QSharedDataPointer \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglshaderprogram.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopengltexture.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopengltimerquery.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qopenglvertexarrayobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qbackingstore.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpagedpaintdevice.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpagelayout.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpagesize.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpaintengine.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpainter.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextoption.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpen.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qfontinfo.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qfontmetrics.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qpdfwriter.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qabstracttextdocumentlayout.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextlayout.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextformat.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qglyphrun.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qrawfont.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qfontdatabase.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextcursor.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextdocument.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qstatictext.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qsyntaxhighlighter.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextobject.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextdocumentfragment.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextdocumentwriter.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtextlist.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtexttable.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
+		../Steganogram/Peer.h \
+		../../../Qt5.7.0/5.7/gcc_64/bin/moc
+	/home/saraseleem/Qt5.7.0/5.7/gcc_64/bin/moc $(DEFINES) -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/mkspecs/linux-g++ -I/home/saraseleem/Desktop/Steganogram/Steganogram -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtWidgets -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtGui -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Steganogram/Peer.h -o moc_Peer.cpp
 
 moc_imageviewer.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -1700,9 +2023,6 @@ moc_imageviewer.cpp: ../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtexttable.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
 		../Steganogram/imageviewer.h \
 		../../../Qt5.7.0/5.7/gcc_64/bin/moc
 	/home/saraseleem/Qt5.7.0/5.7/gcc_64/bin/moc $(DEFINES) -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/mkspecs/linux-g++ -I/home/saraseleem/Desktop/Steganogram/Steganogram -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtWidgets -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtGui -I/home/saraseleem/Qt5.7.0/5.7/gcc_64/include/QtCore -I. -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include ../Steganogram/imageviewer.h -o moc_imageviewer.cpp
@@ -1835,23 +2155,9 @@ main.o: ../Steganogram/main.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qicon.h \
-		../Steganogram/Peer.h \
-		../Steganogram/Message.h \
-		../Steganogram/AuthData.h \
-		../Steganogram/Data.h \
-		../Steganogram/ImageListData.h \
-		../Steganogram/AckData.h \
-		../Steganogram/PingData.h \
-		../Steganogram/StatusData.h \
-		../Steganogram/ImageRequestData.h \
-		../Steganogram/ImageData.h \
-		../Steganogram/encryptjpeg.h \
-		../Steganogram/accessjpeg.h \
-		../Steganogram/aesencrypt.h \
-		../Steganogram/ViewsRequestData.h \
-		../Steganogram/ViewsReplyData.h \
-		../Steganogram/UDPSocket.h \
-		../Steganogram/PackGen.h \
+		../Steganogram/userwindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCore \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCoreDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractanimation.h \
@@ -1962,8 +2268,6 @@ main.o: ../Steganogram/main.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qversionnumber.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qxmlstream.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtcoreversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessible.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessiblebridge.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessibleobject.h \
@@ -2058,10 +2362,6 @@ main.o: ../Steganogram/main.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
-		../Steganogram/userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
@@ -2076,10 +2376,30 @@ main.o: ../Steganogram/main.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
 		../Steganogram/imageviewer.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../Steganogram/Peer.h \
+		../Steganogram/Message.h \
+		../Steganogram/AuthData.h \
+		../Steganogram/Data.h \
+		../Steganogram/ImageListData.h \
+		../Steganogram/AckData.h \
+		../Steganogram/PingData.h \
+		../Steganogram/StatusData.h \
+		../Steganogram/ImageRequestData.h \
+		../Steganogram/ImageData.h \
+		../Steganogram/encryptjpeg.h \
+		../Steganogram/accessjpeg.h \
+		../Steganogram/aesencrypt.h \
+		../Steganogram/ViewsRequestData.h \
+		../Steganogram/ViewsReplyData.h \
+		../Steganogram/UDPSocket.h \
+		../Steganogram/PackGen.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QApplication \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qapplication.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdesktopwidget.h
@@ -2186,23 +2506,9 @@ loginwindow.o: ../Steganogram/loginwindow.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtouchdevice.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabwidget.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qicon.h \
-		../Steganogram/Peer.h \
-		../Steganogram/Message.h \
-		../Steganogram/AuthData.h \
-		../Steganogram/Data.h \
-		../Steganogram/ImageListData.h \
-		../Steganogram/AckData.h \
-		../Steganogram/PingData.h \
-		../Steganogram/StatusData.h \
-		../Steganogram/ImageRequestData.h \
-		../Steganogram/ImageData.h \
-		../Steganogram/encryptjpeg.h \
-		../Steganogram/accessjpeg.h \
-		../Steganogram/aesencrypt.h \
-		../Steganogram/ViewsRequestData.h \
-		../Steganogram/ViewsReplyData.h \
-		../Steganogram/UDPSocket.h \
-		../Steganogram/PackGen.h \
+		../Steganogram/userwindow.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCore \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QtCoreDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qabstractanimation.h \
@@ -2313,8 +2619,6 @@ loginwindow.o: ../Steganogram/loginwindow.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qversionnumber.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qxmlstream.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/qtcoreversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGui \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QtGuiDepends \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessible.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessiblebridge.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qaccessibleobject.h \
@@ -2409,10 +2713,6 @@ loginwindow.o: ../Steganogram/loginwindow.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
-		../Steganogram/userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
@@ -2427,10 +2727,30 @@ loginwindow.o: ../Steganogram/loginwindow.cpp ../Steganogram/loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
 		../Steganogram/imageviewer.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
+		../Steganogram/Peer.h \
+		../Steganogram/Message.h \
+		../Steganogram/AuthData.h \
+		../Steganogram/Data.h \
+		../Steganogram/ImageListData.h \
+		../Steganogram/AckData.h \
+		../Steganogram/PingData.h \
+		../Steganogram/StatusData.h \
+		../Steganogram/ImageRequestData.h \
+		../Steganogram/ImageData.h \
+		../Steganogram/encryptjpeg.h \
+		../Steganogram/accessjpeg.h \
+		../Steganogram/aesencrypt.h \
+		../Steganogram/ViewsRequestData.h \
+		../Steganogram/ViewsReplyData.h \
+		../Steganogram/UDPSocket.h \
+		../Steganogram/PackGen.h \
 		ui_loginwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QVariant \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QAction \
@@ -2768,6 +3088,27 @@ userwindow.o: ../Steganogram/userwindow.cpp ../Steganogram/userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemview.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractscrollarea.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qframe.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyleoption.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractspinbox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qslider.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractslider.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
+		../Steganogram/imageviewer.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
 		../Steganogram/Peer.h \
 		../Steganogram/Message.h \
 		../Steganogram/AuthData.h \
@@ -2785,27 +3126,6 @@ userwindow.o: ../Steganogram/userwindow.cpp ../Steganogram/userwindow.h \
 		../Steganogram/ViewsReplyData.h \
 		../Steganogram/UDPSocket.h \
 		../Steganogram/PackGen.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidgetItem \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistwidget.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlistview.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemview.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractscrollarea.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qframe.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractitemdelegate.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyleoption.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractspinbox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qslider.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qabstractslider.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qstyle.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabbar.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qrubberband.h \
-		../Steganogram/imageviewer.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QTableView \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtableview.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/QStandardItemModel \
 		ui_userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QVariant \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QAction \
@@ -2822,7 +3142,6 @@ userwindow.o: ../Steganogram/userwindow.cpp ../Steganogram/userwindow.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qheaderview.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QLabel \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qlabel.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListView \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QListWidget \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMenuBar \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmenubar.h \
@@ -3222,15 +3541,7 @@ Peer.o: ../Steganogram/Peer.cpp ../Steganogram/Peer.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtexttable.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qvalidator.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qwidget.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qsizepolicy.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMainWindow \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmainwindow.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qtabwidget.h
+		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Peer.o ../Steganogram/Peer.cpp
 
 PingData.o: ../Steganogram/PingData.cpp ../Steganogram/PingData.h \
@@ -3619,9 +3930,6 @@ imageviewer.o: ../Steganogram/imageviewer.cpp ../Steganogram/imageviewer.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtexttable.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qdesktopservices.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtGui/qtguiversion.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QMessageBox \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qmessagebox.h \
-		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/qdialog.h \
 		ui_imageviewer.h \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtCore/QVariant \
 		../../../Qt5.7.0/5.7/gcc_64/include/QtWidgets/QAction \
@@ -3670,6 +3978,9 @@ moc_loginwindow.o: moc_loginwindow.cpp
 
 moc_userwindow.o: moc_userwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_userwindow.o moc_userwindow.cpp
+
+moc_Peer.o: moc_Peer.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Peer.o moc_Peer.cpp
 
 moc_imageviewer.o: moc_imageviewer.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_imageviewer.o moc_imageviewer.cpp
