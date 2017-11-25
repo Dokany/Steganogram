@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <chrono>
 using namespace std;
-
+Peer::Peer(){}
 Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port)
 {
     this->udpSocket_server = new UDPSocket();
@@ -45,15 +45,19 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
     // receiving messages thread
     // thread t2 (sendMsg, ref(msg));
 }
-
-/*Peer(const Peer& other)
+void Peer::logOff()
+{
+    logged_in=false;
+}
+/*
+Peer::Peer(const Peer& other)
 {
     udpSocket_client=other.udpSocket_client;
     udpSocket_server=other.udpSocket_server;
 
-    main_listen = other.main_listen;
-    main_pinger = other.main_pinger;
-    main_receive=other.main_receive;
+   // main_listen = other.main_listen;
+  //  main_pinger = other.main_pinger;
+  //  main_receive=other.main_receive;
 
     myPort = other.myPort;
     myHostname = other.myHostname;
@@ -62,16 +66,16 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
 
     username = other.username;
 
-    mutex_1 = other.mutex_1;
-    mutex_2 = other.mutex_2;
-    mutex_3 = other.mutex_3;
+    //mutex_1 = other.mutex_1;
+    //mutex_2 = other.mutex_2;
+    //mutex_3 = other.mutex_3;
 
-    cond = other.cond;
-    cond1 = other.cond1;
-    listening = other.listening;
+   // cond = other.cond;
+   // cond1 = other.cond1;
+    //listening = other.listening;
 
-    processes_r = other.processes_r;
-    processes_s = other.processes_s;
+   // processes_r = other.processes_r;
+   // processes_s = other.processes_s;
 
     requests = other.requests;
     requests_process = other.requests_process;
@@ -90,14 +94,14 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
     pendingImageOwners = other.pendingImageOwners;
 }
 
-Peer& operator=(const Peer& other)
+Peer& Peer::operator=(const Peer& other)
 {
     udpSocket_client=other.udpSocket_client;
     udpSocket_server=other.udpSocket_server;
 
-    main_listen = other.main_listen;
-    main_pinger = other.main_pinger;
-    main_receive=other.main_receive;
+   // main_listen = other.main_listen;
+    //main_pinger = other.main_pinger;
+   // main_receive=other.main_receive;
 
     myPort = other.myPort;
     myHostname = other.myHostname;
@@ -106,16 +110,16 @@ Peer& operator=(const Peer& other)
 
     username = other.username;
 
-    mutex_1 = other.mutex_1;
-    mutex_2 = other.mutex_2;
-    mutex_3 = other.mutex_3;
+    //mutex_1 = other.mutex_1;
+    //mutex_2 = other.mutex_2;
+    //mutex_3 = other.mutex_3;
 
-    cond = other.cond;
-    cond1 = other.cond1;
-    listening = other.listening;
+    //cond = other.cond;
+    //cond1 = other.cond1;
+   // listening = other.listening;
 
-    processes_r = other.processes_r;
-    processes_s = other.processes_s;
+   // processes_r = other.processes_r;
+    //processes_s = other.processes_s;
 
     requests = other.requests;
     requests_process = other.requests_process;
@@ -183,17 +187,21 @@ bool Peer::login(string username, string password)
 
 void Peer::ping()
 {
+
     while(listening)
     {
-std::this_thread::sleep_for(std::chrono::seconds(15));
-        cout<<"pinging\n";
-        string myIP(myHostname);
-        string targetIP(serviceHostname);
-        Message ping(Ping, myIP, myPort, targetIP, servicePort);
-        PingData pd(username);
-        ping.setData(pd);
-        ping.Flatten();
-        execute(ping);
+        if(logged_in)
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            cout<<"pinging\n";
+            string myIP(myHostname);
+            string targetIP(serviceHostname);
+            Message ping(Ping, myIP, myPort, targetIP, servicePort);
+            PingData pd(username);
+            ping.setData(pd);
+            ping.Flatten();
+            execute(ping);
+        }
 
     }
 }
@@ -668,15 +676,14 @@ void Peer::handleReceivedMessage(Message m, string id)
 
             break;
          }
-        case ViewsRequest:
-        {
+         case ViewsRequest:
+         {
             ViewsRequestData rd;
             rd.unFlatten(data);
             string name=rd.getName();
             string user = currentOnlineUsers[m.getOwnerIP()].first;
             string request = "User "+user+" has requested more views for "+name+ ", do you accept?\n";
             string title = "Image Request Received";
-
             auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
             if(accept==QMessageBox::Yes)
             {
@@ -698,9 +705,9 @@ void Peer::handleReceivedMessage(Message m, string id)
                 memcpy(hn, m.getOwnerIP().c_str(),m.getOwnerIP().length() + 1);
                 sendWithoutWaiting(neg, m.getOwnerPort(),hn);
             }
-           break;
-        }
-        case DenyRequest:
+            break;
+         }
+    case DenyRequest:
         {
             //POP UP WINDOW DENIED!
             waiting=false;
@@ -728,7 +735,23 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
     }
 }
-
+void Peer::requestViews(string name, string user)
+{
+   string targetIP = nameToAddress[user].first;
+   int targetPort = nameToAddress[user].second;
+   Message msg(ViewsReply,string(myHostname), myPort, targetIP, targetPort);
+   ViewsRequestData vrd;
+   vrd.setName(name);
+   msg.setData(vrd);
+   msg.Flatten();
+   execute(msg);
+}
+void Peer::addViews(int count, string image, string user)
+{
+    string path = user +'_'+ image;
+    ImageData id(image, ".Shared/"+path, count);
+     imageStatus[path]=count;
+}
 void Peer::copyWindow(QMainWindow *q)
 {
     mw=q;
@@ -787,28 +810,6 @@ void Peer::requestImage(string name, string user)
 
 }
 
-void Peer::requestViews(string name, string user)
-{
-    string targetIP = nameToAddress[user].first;
-    int targetPort = nameToAddress[user].second;
-    Message msg(ViewsReply,string(myHostname), myPort, targetIP, targetPort);
-    ViewsRequestData vrd;
-    vrd.setName(name);
-    msg.setData(vrd);
-    msg.Flatten();
-    execute(msg);
-
-}
-
-void Peer::addViews(int count, string image, string user)
-{
-    string path = user +'_'+ image;
-    ImageData id(image, ".Shared/"+path, count);
-     imageStatus[path]=count;
-}
-
-
-
 Peer::~Peer(){
 
     std::map<string,int>::iterator it;
@@ -821,14 +822,4 @@ Peer::~Peer(){
         id.setPath(it->first);
         id.setCount(it->second);
     }
-    // listening = false;
-
-    // cond.notify_all();
-    // cond1.notify_all();
-
-    // for (thread& t : processes) t.join();
-
-    // main_listen.join();
-    // main_send.join();
-    // main_receive.join();
 }
