@@ -436,6 +436,8 @@ void Peer::receiveMain()
 
 void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
 {
+    string idd = m.getID()+m.getOwnerIP()+to_string(time(NULL));
+    m.setMessageID(idd);
     PackGen pg(max_size);
 
     vector<Message> v = pg.fragment(m);
