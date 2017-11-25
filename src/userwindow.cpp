@@ -59,7 +59,8 @@ void UserWindow::handleMBox(){
 void UserWindow::terminateBox()
 {
     cout<<"IN TERMINATE WINDOW\n";
-    auto reply = QMessageBox::warning(this,"Main Server closed", "Server closed, shuting down...\n");
+    //auto reply =
+    QMessageBox::warning(this,"Main Server closed", "Server closed, shuting down...\n");
     this->close();
 }
 
@@ -301,6 +302,12 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
         // Remove filename from imageWidget
         delete ui->sharedWidget->takeItem(ui->sharedWidget->row(item));
     }
+}
+
+void UserWindow::on_usersWidget_itemClicked(QListWidgetItem *item)
+{
+    il = new ImageList(this, *p, (item->text).toStdString());
+    il->show();
 }
 
 UserWindow::~UserWindow()

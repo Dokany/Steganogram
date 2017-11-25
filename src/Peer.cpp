@@ -144,7 +144,7 @@ std::set<string> Peer::getMyImages()
     return localImages;
 }
 
-std::set<string>  Peer::getUserImages(string username)
+std::set<string> Peer::getUserImages(string username)
 {
     std::set<string> ret;
     Message req(ImageListRequest,string(myHostname),myPort, nameToAddress[username].first, nameToAddress[username].second);
@@ -156,7 +156,6 @@ std::set<string>  Peer::getUserImages(string username)
     ret= currentImageListReply;
     currentImageListReply.clear();
     return ret;
-
 }
 
 void Peer::setLocalImages(std::set<string> arg)
