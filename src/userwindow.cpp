@@ -100,6 +100,8 @@ void UserWindow:: viewImageWidget()
 
             imgs.insert(tmp2);
         }
+
+        p->setLocalImages(imgs);
     }
 
     //model_2->setStringList(list_2);
@@ -306,7 +308,7 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
 
 void UserWindow::on_usersWidget_itemClicked(QListWidgetItem *item)
 {
-    il = new ImageList(this, *p, (item->text()).toStdString());
+    il = new ImageList(this, p, (item->text()).toStdString());
     il->show();
 }
 

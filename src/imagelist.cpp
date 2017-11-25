@@ -2,13 +2,16 @@
 #include "ui_imagelist.h"
 #include<QMessageBox>
 
-ImageList::ImageList(QWidget *parent, Peer &p, std::string username) :
+ImageList::ImageList(QWidget *parent, Peer* p, std::string username) :
     QDialog(parent),
     ui(new Ui::ImageList)
 {
     ui->setupUi(this);
 
-    imageList = p.getUserImages(username);
+    this->p = p;
+    this->username = username;
+
+    imageList = p->getUserImages(username);
 
     if (imageList.empty())
     {
@@ -32,7 +35,8 @@ void ImageList:: viewImageListWidget()
 
 void ImageList::on_imageListWidget_itemClicked(QListWidgetItem *item)
 {
-    // Requesting Image
+    // Requesting Image from User
+    p->requestImage((item->text()).toStdString(), username);
 }
 
 ImageList::~ImageList()
