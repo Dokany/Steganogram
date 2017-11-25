@@ -180,7 +180,7 @@ bool Peer::login(string username, string password)
     waiting = true;
     cout<<"BEGIN EXECUTION\n";
     execute(m);
-
+    this->username=username;
     cout<<"Waiting is "<<waiting<<endl;
     while(waiting);
     cout<<"done waiting --------------------------:\n";
