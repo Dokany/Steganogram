@@ -203,7 +203,10 @@ void Peer::ping()
             PingData pd(username);
             ping.setData(pd);
             ping.Flatten();
-            execute(ping);
+
+            char *hn = new char[targetIP.length() + 1];
+            memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
+            sendWithoutWaiting(ping,servicePort, hn);
         }
     }
 }
@@ -577,7 +580,8 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
         case StatusReply:
         {
-            if(!logged_in)return;
+
+//            if(!logged_in)return;
             StatusData sd;
             sd.unFlatten(data);
             cout<<"Received online users: \n";
@@ -663,11 +667,23 @@ void Peer::handleReceivedMessage(Message m, string id)
             auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
             if(accept==QMessageBox::Yes)
             {
-                ImageData id(name,"Images/"+name,5);
+                string path = "Images/"+name;
+                cout<<"NAME ======  " << path <<endl;
+                ImageData id(name,path,5);
+                cout<<"Image Data Initialization --------------------------  "  <<endl;
+
                 Message reply(ImageReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
+                cout<<"Image Data Reply --------------------------  "  <<endl;
+
                 reply.setData(id);
+                cout<<"Set DATA --------------------------  "  <<endl;
+
                 reply.Flatten();
+                cout<<"Flatten --------------------------  "  <<endl;
+
                 execute(reply);
+                cout<<"EXECUTE (REPLY) --------------------------  "  <<endl;
+
             }
             else
             {
