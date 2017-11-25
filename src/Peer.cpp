@@ -47,6 +47,7 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
 }
 void Peer::logOff()
 {
+    //halt();
     logged_in=false;
 }
 /*
@@ -176,23 +177,25 @@ bool Peer::login(string username, string password)
     }
     m.setData(ad);
     m.Flatten();
-    execute(m);
     waiting = true;
-    //cout<<"Waiting is "<<waiting<<endl;
-    while(waiting);
+    cout<<"BEGIN EXECUTION\n";
+    execute(m);
 
+    cout<<"Waiting is "<<waiting<<endl;
+    while(waiting);
+    cout<<"done waiting --------------------------:\n";
     return logged_in;
 }
 
 
 void Peer::ping()
 {
-
     while(listening)
     {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
         if(logged_in)
         {
-            std::this_thread::sleep_for(std::chrono::seconds(5));
+
             cout<<"pinging\n";
             string myIP(myHostname);
             string targetIP(serviceHostname);
@@ -202,7 +205,6 @@ void Peer::ping()
             ping.Flatten();
             execute(ping);
         }
-
     }
 }
 
@@ -230,7 +232,10 @@ void Peer::sendMain()
                     Message msg = requests.front();
                     string idd = msg.getID()+msg.getOwnerIP()+to_string(time(NULL));
 
-                    if(!logged_in)auth_id = idd;
+                    if(!logged_in){
+                        cout<<"set AUTH ID\n";
+                              auth_id = idd;
+                    }
                     msg.setMessageID(idd);
                     msg.Flatten();
                     char *IP = new char[msg.getTargetIP().length() + 1];
@@ -524,6 +529,7 @@ void Peer::handleReceivedMessage(Message m, string id)
             {
                 cout<<"Log is successful\n";
                 logged_in = true;
+
                 waiting = false;
             }
             else if(pendingImageOwners.find(ad.getMessageID())!= pendingImageOwners.end())//he got the image
