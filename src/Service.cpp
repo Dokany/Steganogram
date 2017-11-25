@@ -34,6 +34,8 @@ Service::Service(char * _listen_hostname, int _listen_port)
 	listening = true;
 
 	main_listen = thread(&Service::listen,this);
+	
+	pingThread = thread(&Service::pingRefresh, this);
 	long unsigned int str_username;
 	long unsigned int str_password;
 	inputFile.open("auth.txt");
@@ -146,30 +148,22 @@ void Service::pingHandler(string username)
 
 void Service::pingRefresh()
 {
-	thread t([&](){
-	    //cout << "ping thread\n";
-	    while(listening)
-	    {
-		    //time(&current_time);
+    while(listening)
+    {
+	    time_t current_time;
+	    time(&current_time);
 
-		    for (auto &a : online_directory) 
-				{
-					// cout<<"~~~~~~~~~~~~~~~~ User is "<<a.first<<" elapsed:"<<abs(a.second -  time(NULL))<<endl;
-					if (abs(a.second -  time(NULL)) > 40)
-					{	cout<<"**********40 SECONDS PASSED ******"<<endl;
-						cout<<a.first<<" removed"<<endl;
-
-						online_directory.erase(a.first);
-						online_list.erase(a.first);
-
-					}
-
-				}
+	    for (auto &a : online_directory) 
+		{
+			if (abs(a.second - current_time) > 600)
+			{
+				online_directory.erase(a.first);
+				online_list.erase(a.first);
+			}
 		}
-    });
-
-    t.join();
+	}
 }
+
 void Service::sendHandler(Message msg, int port, char *hostname, int timeout)
 {
 	//fragment, send all fragments (w/out wait)
@@ -218,20 +212,30 @@ void Service::sendHandler(Message msg, int port, char *hostname, int timeout)
 
 void Service::halt()
 {
-	
+	// Terminating Service
+	thread terminate_thread(&Service::terminateUsers,this);
+	cout << "Terminating Service...\n";
+	terminate_thread.join();
+	cout << "Termination complete.\n";
+
+	// Terminating Service Worker Threads
 	listening = false;
 
-	//while (main_listen.joinable());
-
 	main_listen.join();
+	cout << "Main listen thread\n";
 
 	cond.notify_all();
 	cond1.notify_all();
 
 	for (thread& t : processes_s) t.join();
+	cout << "Send threads\n";
 
 	for (thread& t : processes_r) t.join();
+	cout << "Receive Threads\n";
 	
+	pingThread.join();
+	cout << "Ping thread\n";
+	//while (main_listen.joinable());
 	//main_send.join();
 	//main_receive.join();
 }
@@ -544,7 +548,21 @@ void Service::handleReceivedMessage(Message m, string id)
 		}
 	}
 }
+void Service::terminateUsers()
+{
+	for (auto& p : online_list)
+	{
+		cout << "Terminating user: " << std::string(myHostname) << "\t" << myPort << "\t" << p.second.first << "\t"<< p.second.second << endl;
+		Message terminateMsg(Terminate, std::string(myHostname), myPort, p.second.first, p.second.second);
+		terminateMsg.Flatten();
 
+		char *hn = new char[(p.second.first).length() + 1];
+		
+		memcpy(hn, (p.second.first).c_str(),(p.second.first).length() + 1);
+
+		sendWithoutWaiting(terminateMsg, p.second.second, hn);
+	}
+}
 Service::~Service(){
 
 	// listening = false;
