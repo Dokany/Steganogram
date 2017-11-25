@@ -153,6 +153,20 @@ bool Message::setData(Data &d)
 			data = pd.getFlattenedData();
 			break;
 		}
+        case ViewsRequest:
+        {
+                ViewsRequestData &pd = dynamic_cast<ViewsRequestData&>(d);
+                pd.Flatten();
+                data = pd.getFlattenedData();
+                break;
+        }
+        case ViewsReply:
+        {
+            ViewsReplyData &pd = dynamic_cast<ViewsReplyData&>(d);
+            pd.Flatten();
+             data = pd.getFlattenedData();
+             break;
+        }
 		default:
 		{
 			perror("No Data Needed\n");

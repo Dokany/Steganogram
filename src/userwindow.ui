@@ -163,10 +163,20 @@ width:20px;
     <widget class="QListView" name="usersList">
      <property name="geometry">
       <rect>
-       <x>5</x>
+       <x>10</x>
        <y>30</y>
-       <width>211</width>
-       <height>381</height>
+       <width>101</width>
+       <height>341</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QListWidget" name="usersWidget">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>30</y>
+       <width>81</width>
+       <height>341</height>
       </rect>
      </property>
     </widget>
@@ -222,16 +232,29 @@ width:20px;
     <property name="title">
      <string>My Images</string>
     </property>
-    <widget class="QListView" name="myImagesList">
+    <widget class="QListWidget" name="imageWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>31</y>
        <width>381</width>
-       <height>351</height>
+       <height>341</height>
       </rect>
      </property>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="RefreshButton">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>0</y>
+      <width>71</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Refresh</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

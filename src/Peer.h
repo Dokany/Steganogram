@@ -87,7 +87,8 @@ class Peer
         void copyWindow(QMainWindow *q);
         void requestImage(string name, string user);
         void logOff();
-
+        void requestViews(string name, string user);
+        void addViews(int count, string image, string user);
         void halt();
 
         ~Peer();

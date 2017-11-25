@@ -5,20 +5,17 @@
 #include <QThread>
 #include <iostream>
 
-LoginWindow::LoginWindow(QWidget *parent, Peer &p) :
+LoginWindow::LoginWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::LoginWindow)
 {
     ui->setupUi(this);
-    QPixmap pix("/home/saraseleem/Downloads/Steganogram/Steganogram/logo.png");
+    QPixmap pix("/home/saraseleem/Desktop/Steganogram/Steganogram/logo.png");
     ui->LogoLabel->setPixmap(pix.scaled(100,100,Qt::KeepAspectRatio));
     ui->authError->hide();
-    peer=&p;
-}
-
-LoginWindow::~LoginWindow()
-{
-    delete ui;
+    peer = new Peer("10.7.57.229",4444,"10.7.57.200",4444);
+  //  peer=&p;
+    this->setAttribute( Qt::WA_QuitOnClose, false );
 }
 
 void LoginWindow::on_LoginButton_clicked()
@@ -30,14 +27,28 @@ void LoginWindow::on_LoginButton_clicked()
         //QMessageBox::information(this, "Login", "Username and password are correct");
         hide();
         std::cout << "login sucessfully\n";
-        userWindow = new UserWindow(this, *peer);
+        userWindow = new UserWindow(this, peer);
         std::cout << "call user window\n";
         userWindow->show();
+        reset();
     }
 
     else
+    {
         ui->authError->setStyleSheet("color: #ff0000");
         ui->authError->show();
+    }
         //QMessageBox::information(this, "Login", "Username and password are not correct");
+
+}
+void LoginWindow::reset()
+{
+    ui->UsernameLineEdit->clear();
+    ui->PasswordLineEdit->clear();
+    ui->authError->hide();
 }
 
+LoginWindow::~LoginWindow()
+{
+    delete ui;
+}

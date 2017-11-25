@@ -71,13 +71,13 @@ HEADERS += \
     accessjpeg.h \
     aesencrypt.h \
     encryptjpeg.h \
-    ViewsReplyData.h \
-    ViewsRequestData.h
+    ViewsRequestData.h \
+    ViewsReplyData.h
 
 FORMS += \
         loginwindow.ui \
-    userwindow.ui \
-    imageviewer.ui
+    imageviewer.ui \
+    userwindow.ui
 
 DISTFILES += \
     cat.jpg \

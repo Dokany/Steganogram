@@ -7,6 +7,8 @@
 #include "StatusData.h"
 #include "ImageRequestData.h"
 #include "ImageData.h"
+#include "ViewsRequestData.h"
+#include "ViewsReplyData.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>

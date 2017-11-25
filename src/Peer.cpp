@@ -672,11 +672,37 @@ void Peer::handleReceivedMessage(Message m, string id)
 
             break;
          }
-//        case ViewsRequest:
-//        {
-
-//           break;
-//        }
+         case ViewsRequest:
+         {
+            ViewsRequestData rd;
+            rd.unFlatten(data);
+            string name=rd.getName();
+            string user = currentOnlineUsers[m.getOwnerIP()].first;
+            string request = "User "+user+" has requested more views for "+name+ ", do you accept?\n";
+            string title = "Image Request Received";
+            auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
+            if(accept==QMessageBox::Yes)
+            {
+                ViewsReplyData id;
+                id.setCount(5);
+                id.setName(name);
+                Message reply(ImageReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
+                reply.setData(id);
+                reply.Flatten();
+                execute(reply);
+            }
+            else
+            {
+                Message neg(NegAck, myHostname,myPort,m.getOwnerIP(), m.getOwnerPort());
+                AckData nd(_NegAck, id);
+                neg.setData(nd);
+                neg.Flatten();
+                char *hn = new char[m.getOwnerIP().length() + 1];
+                memcpy(hn, m.getOwnerIP().c_str(),m.getOwnerIP().length() + 1);
+                sendWithoutWaiting(neg, m.getOwnerPort(),hn);
+            }
+            break;
+         }
     case DenyRequest:
         {
             //POP UP WINDOW DENIED!
@@ -705,7 +731,23 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
     }
 }
-
+void Peer::requestViews(string name, string user)
+{
+   string targetIP = nameToAddress[user].first;
+   int targetPort = nameToAddress[user].second;
+   Message msg(ViewsReply,string(myHostname), myPort, targetIP, targetPort);
+   ViewsRequestData vrd;
+   vrd.setName(name);
+   msg.setData(vrd);
+   msg.Flatten();
+   execute(msg);
+}
+void Peer::addViews(int count, string image, string user)
+{
+    string path = user +'_'+ image;
+    ImageData id(image, ".Shared/"+path, count);
+     imageStatus[path]=count;
+}
 void Peer::copyWindow(QMainWindow *q)
 {
     mw=q;
@@ -766,14 +808,14 @@ void Peer::requestImage(string name, string user)
 
 Peer::~Peer(){
 
-    // listening = false;
-
-    // cond.notify_all();
-    // cond1.notify_all();
-
-    // for (thread& t : processes) t.join();
-
-    // main_listen.join();
-    // main_send.join();
-    // main_receive.join();
+    std::map<string,int>::iterator it;
+    for(it=imageStatus.begin();it!=imageStatus.end();++it)
+    {
+        ImageData id;
+        string temp=it->first;
+        temp.erase(0,8);
+        id.setName(temp);
+        id.setPath(it->first);
+        id.setCount(it->second);
+    }
 }
