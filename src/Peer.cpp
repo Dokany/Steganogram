@@ -150,10 +150,10 @@ std::set<string> Peer::getUserImages(string username)
     Message req(ImageListRequest,string(myHostname),myPort, nameToAddress[username].first, nameToAddress[username].second);
     req.Flatten();
     execute(req);
-    waiting =true;
+    waiting = true;
     while(waiting);
 
-    ret= currentImageListReply;
+    ret = currentImageListReply;
     currentImageListReply.clear();
     return ret;
 }
@@ -163,7 +163,7 @@ void Peer::setLocalImages(std::set<string> arg)
     localImages=arg;
 }
 
-int Peer::login(string username, string password)
+bool Peer::login(string username, string password)
 {
     Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
     AuthData ad;
@@ -180,20 +180,9 @@ int Peer::login(string username, string password)
     execute(m);
     this->username=username;
     cout<<"Waiting is "<<waiting<<endl;
-    int i=0;
-    while(true)
-    {
-        if(!waiting)break;
-        else if(i>3)break;
-        else
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            i++;
-        }
-    }
+    while(waiting);
     cout<<"done waiting --------------------------:\n";
-    if(waiting)return -1;
-    else return logged_in;
+    return logged_in;
 }
 
 

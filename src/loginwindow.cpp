@@ -10,10 +10,10 @@ LoginWindow::LoginWindow(QWidget *parent) :
     ui(new Ui::LoginWindow)
 {
     ui->setupUi(this);
-    QPixmap pix("logo.png");
+    QPixmap pix("/home/saraseleem/Desktop/Steganogram/Steganogram/logo.png");
     ui->LogoLabel->setPixmap(pix.scaled(100,100,Qt::KeepAspectRatio));
     ui->authError->hide();
-    peer = new Peer("10.7.57.117",4444,"10.7.57.200",4444);
+    peer = new Peer("10.7.57.229",4444,"10.7.57.117",4444);
   //  peer=&p;
     this->setAttribute( Qt::WA_QuitOnClose, false );
 }
@@ -22,8 +22,8 @@ void LoginWindow::on_LoginButton_clicked()
 {
     QString username = ui->UsernameLineEdit->text();
     QString password = ui->PasswordLineEdit->text();
-    int ret=peer->login(username.toStdString(),password.toStdString());
-    if (ret==1) {
+
+    if (peer->login(username.toStdString(),password.toStdString())) {
         //QMessageBox::information(this, "Login", "Username and password are correct");
         hide();
         std::cout << "login sucessfully\n";
@@ -33,16 +33,12 @@ void LoginWindow::on_LoginButton_clicked()
         reset();
     }
 
-    else if(ret==0)
+    else
     {
         ui->authError->setStyleSheet("color: #ff0000");
         ui->authError->show();
     }
-    else
-    {
-        reset();
-        QMessageBox::warning(this,"Connection Error!", "Cannot connect to service... \n");
-    }
+        //QMessageBox::information(this, "Login", "Username and password are not correct");
 
 }
 void LoginWindow::reset()
