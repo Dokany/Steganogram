@@ -8,7 +8,7 @@ Image sharing application build using UNIX sockets and UDP to implement Remote I
 - Yasmin ElDokany
 
 ### Dependencies to be installed:
-#### - [Steghide](http://steghide.sourceforge.net/)
+####- [Steghide](http://steghide.sourceforge.net/)
 ```
 sudo apt-get install steghide
 ```
