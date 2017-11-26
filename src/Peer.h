@@ -93,7 +93,7 @@ class Peer : public QObject
         string getMBoxTitle();
         string getMBoxRequest();
         void setMBoxBool(bool);
-        bool login(string username, string password);
+        int login(string username, string password);
         void execute(Message msg);
         void requestImage(string name, string user);
         void logOff();

@@ -200,7 +200,7 @@ void UserWindow::on_imageWidget_itemClicked(QListWidgetItem *item)
 
 void UserWindow::on_uploadButton_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "/home/saraseleem/Desktop/", "All Files (*.*);; Png Image (*.png)");
+    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "~/Desktop", "All Files (*.*);; Png Image (*.png)");
     cout<<filename.toStdString()<<endl;
     string name=filename.toStdString();
     std::reverse(name.begin(),name.end());

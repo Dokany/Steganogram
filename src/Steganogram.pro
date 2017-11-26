@@ -47,7 +47,8 @@ SOURCES += \
     aesencrypt.cpp \
     encryptjpeg.cpp \
     ViewsRequestData.cpp \
-    ViewsReplyData.cpp
+    ViewsReplyData.cpp \
+    imagelist.cpp
 
 HEADERS += \
         loginwindow.h \
@@ -72,12 +73,14 @@ HEADERS += \
     aesencrypt.h \
     encryptjpeg.h \
     ViewsRequestData.h \
-    ViewsReplyData.h
+    ViewsReplyData.h \
+    imagelist.h
 
 FORMS += \
         loginwindow.ui \
     imageviewer.ui \
-    userwindow.ui
+    userwindow.ui \
+    imagelist.ui
 
 DISTFILES += \
     cat.jpg \
