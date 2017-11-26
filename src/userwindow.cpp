@@ -16,14 +16,16 @@
 #include <QFileDialog>
 #include <QWidget>
 
-UserWindow::UserWindow(QWidget *parent, Peer* p) :
+UserWindow::UserWindow(QWidget *parent, Peer* p, std::string username) :
     QMainWindow(parent),
     ui(new Ui::UserWindow)
 {
+    this->username = username;
     cout << "Beginning: Constructing\n";
     this->p = p;
     connect(this->p,SIGNAL(firstWindow()),SLOT(handleMBox()));
     connect(this->p,SIGNAL(terminateProgram()),SLOT(terminateBox()));
+    connect(this->p,SIGNAL(countWindow()),SLOT(countMBox()));
     cout<<"Copying Peer\n";
     ui->setupUi(this);
     cout<<"Setup UI\n";
@@ -56,6 +58,41 @@ void UserWindow::handleMBox(){
     p->processReply();
 
 }
+void UserWindow::countMBox()
+{
+    string request = p->getMBoxRequest();
+    string title = p->getMBoxTitle();
+    QMessageBox msgBox(this);
+
+    msgBox.setText(title.c_str());
+    QAbstractButton* pButtonGrant5 = msgBox.addButton(tr("Grant 5 views!"), QMessageBox::YesRole);
+    QAbstractButton* pButtonGrant10 = msgBox.addButton(tr("Grant 10 views!"), QMessageBox::YesRole);
+    QAbstractButton* pButtonGrant15 = msgBox.addButton(tr("Grant 15 views!"), QMessageBox::YesRole);
+    QAbstractButton* no = msgBox.addButton(tr("Deny!"), QMessageBox::NoRole);
+    //QMessageBox::question(this,,request.c_str(),pButtonGrant5|QMessageBox::No);
+    msgBox.exec();
+    if(msgBox.clickedButton()==pButtonGrant5)
+    {
+        p->setMBoxBool(true);
+        p->setMBoxCount(5);
+    }
+    else if(msgBox.clickedButton()==pButtonGrant10)
+    {
+        p->setMBoxBool(true);
+        p->setMBoxCount(10);
+    }
+    if(msgBox.clickedButton()==pButtonGrant15)
+    {
+        p->setMBoxBool(true);
+        p->setMBoxCount(15);
+    }
+    else
+    {
+        p->setMBoxBool(false);
+    }
+    p->processReply();
+}
+
 void UserWindow::terminateBox()
 {
     cout<<"IN TERMINATE WINDOW\n";
@@ -67,6 +104,7 @@ void UserWindow::terminateBox()
 void UserWindow:: viewImageWidget()
 {
     std::set<string> imgs;
+
 
     const QString folderPath = "Images/";
      if(folderPath.isEmpty())cout<<"EMPTY --fbadf\n";
@@ -115,7 +153,7 @@ void UserWindow:: viewSharedWidget()
 {
     std::set<string> imgs;
 
-    const QString folderPath = ".Shared/";
+    const QString folderPath = "Shared/";
 
     if(folderPath.isEmpty())cout<<"EMPTY --fbadf\n";
     if(!folderPath.isEmpty())
@@ -132,7 +170,7 @@ void UserWindow:: viewSharedWidget()
 
         mdir.setNameFilters(filter);
         cout<<"NOT EMPTY -4\n";
-
+        ui->sharedWidget->clear();
         QFileInfoList filelistinfo = mdir.entryInfoList(filter, QDir::Files|QDir::NoDotAndDotDot);
         cout<<"NOT EMPTY -5\n";
        // cout << (filelistinfo.back().filePath().toStdString())<< " ---------------------------------------------------------\n";
@@ -200,7 +238,7 @@ void UserWindow::on_imageWidget_itemClicked(QListWidgetItem *item)
 
 void UserWindow::on_uploadButton_clicked()
 {
-    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "/home/saraseleem/Desktop/", "All Files (*.*);; Png Image (*.png)");
+    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"), "~/Desktop", "All Files (*.*);; Png Image (*.png)");
     cout<<filename.toStdString()<<endl;
     string name=filename.toStdString();
     std::reverse(name.begin(),name.end());
@@ -246,6 +284,7 @@ void UserWindow::on_RefreshButton_clicked()
 {
     // Updates Online User List
    updateOnlineWidget();
+   viewSharedWidget();
 }
 
 
@@ -263,7 +302,7 @@ void UserWindow::updateOnlineWidget()
 
     for(it=list_1.begin();it!=list_1.end();++it)
     {
-        ui->usersWidget->addItem((it->second.first).c_str());
+           if (it->second.first != username) ui->usersWidget->addItem((it->second.first).c_str());
     }
 }
 
@@ -279,23 +318,28 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
     imageOptions->setWindowTitle("Image Options");
     imageOptions->setText("Select Image Options");
 
-    QAbstractButton* pButtonView = imageOptions->addButton(tr("View"), QMessageBox::YesRole);
-    QAbstractButton* pButtonDelete =imageOptions->addButton(tr("Delete"), QMessageBox::NoRole);
+    QAbstractButton* pButtonView = imageOptions->addButton(tr("View"), QMessageBox::ActionRole);
+    QAbstractButton* pButtonDelete =imageOptions->addButton(tr("Delete"), QMessageBox::ActionRole);
+    QAbstractButton* pButtonRequest =imageOptions->addButton(tr("Request Views"), QMessageBox::ActionRole);
+    QAbstractButton* pButtonCancel =imageOptions->addButton(tr("Cancel"), QMessageBox::NoRole);
 
     imageOptions->exec();
 
     if (imageOptions->clickedButton()==pButtonView) {
         // Opening ImageViewer Pop-up Window
-        iv = new imageviewer(this, std::string(".Shared/"+s), false, *p);
+        string path;
+        path=p->viewImage(std::string("Shared/"+s));
+        iv = new imageviewer(this, path, false, *p);
         iv->show();
     }
     else if (imageOptions->clickedButton()==pButtonDelete)
+
     {
         this->activateWindow();
         //this->setWindowFlags(Qt::WindowSystemMenuHint);
 
         // Delete image from directory
-        string command = "rm -f .Shared/" + s;
+        string command = "rm -f Shared/" + s;
 
         char* command_char = new char[command.length()+1];
         strcpy(command_char, command.c_str());
@@ -304,6 +348,12 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
         // Remove filename from imageWidget
         delete ui->sharedWidget->takeItem(ui->sharedWidget->row(item));
     }
+     else if (imageOptions->clickedButton()==pButtonRequest)
+    {
+        string user=s.substr(0,s.find('_'));
+        string name = s.substr(user.length());
+        p->requestViews(name,user);
+    }
 }
 
 void UserWindow::on_usersWidget_itemClicked(QListWidgetItem *item)
@@ -311,6 +361,7 @@ void UserWindow::on_usersWidget_itemClicked(QListWidgetItem *item)
     il = new ImageList(this, p, (item->text()).toStdString());
     il->show();
 }
+
 
 UserWindow::~UserWindow()
 {

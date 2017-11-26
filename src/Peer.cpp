@@ -150,10 +150,10 @@ std::set<string> Peer::getUserImages(string username)
     Message req(ImageListRequest,string(myHostname),myPort, nameToAddress[username].first, nameToAddress[username].second);
     req.Flatten();
     execute(req);
-    waiting = true;
+    waiting =true;
     while(waiting);
 
-    ret = currentImageListReply;
+    ret= currentImageListReply;
     currentImageListReply.clear();
     return ret;
 }
@@ -163,7 +163,7 @@ void Peer::setLocalImages(std::set<string> arg)
     localImages=arg;
 }
 
-bool Peer::login(string username, string password)
+int Peer::login(string username, string password)
 {
     Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
     AuthData ad;
@@ -180,9 +180,21 @@ bool Peer::login(string username, string password)
     execute(m);
     this->username=username;
     cout<<"Waiting is "<<waiting<<endl;
-    while(waiting);
+    int i=0;
+     std::this_thread::sleep_for(std::chrono::seconds(3));
+//    while(true)
+//    {
+//        if(!waiting)break;
+//        else if(i>10)break;
+//        else
+//        {
+
+//            i++;
+//        }
+//    }
     cout<<"done waiting --------------------------:\n";
-    return logged_in;
+    if(waiting)return -1;
+    else return logged_in;
 }
 
 
@@ -514,6 +526,11 @@ void Peer::receiveHandler(string message_id, int timeout)
     }
     cout<<"exiting receive handler\n";
 }
+ void Peer::setMBoxCount(int i)
+ {
+     mbox_count=i;
+ }
+
 void Peer::processReply()
 {
     bool accept=mbox_bool;
@@ -529,10 +546,11 @@ void Peer::processReply()
             {
                 string path = "Images/"+name;
 
-                ImageData id(name,path,5);
+                ImageData id(name,path,mbox_count);
 
                 Message reply(ImageReply, string(myHostname), myPort, ip,port);
-
+                cout<<"SET COUNT "<<mbox_count<<endl;
+                currentImageViewers[name].push_back(make_pair(currentOnlineUsers[ip].first,mbox_count));
 
                 reply.setData(id);
 
@@ -580,8 +598,9 @@ void Peer::processReply()
             if(accept)
             {
                 ViewsReplyData id;
-                id.setCount(5);
+                id.setCount(mbox_count);
                 id.setName(name);
+                currentImageViewers[name].push_back(make_pair(currentOnlineUsers[ip].first,mbox_count));
                 Message reply(ImageReply, string(myHostname), myPort, ip,port);
                 reply.setData(id);
                 reply.Flatten();
@@ -653,15 +672,23 @@ void Peer::handleReceivedMessage(Message m, string id)
             string name=currentOnlineUsers[m.getOwnerIP()].first;
             name+='_';
             name+=id.getName();
-            string path= "/.Shared/"+name;
+            string path= "Shared/"+name;
+            string shared_directory =  "Shared/";
+
+            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!~~~~~~~ NAME "<<name<<endl;
             out.open(path);
             string iim=id.getImage();
+            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!~~~~~~~ IMMMM "<<iim<<endl;
 
-            //cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
             out<<iim;
+            out.close();
+            id.setPath(shared_directory);
+            id.setName(name);
+            id.embeddInDefault();
+
             int count = id.getCount();
             imageStatus[name]=count;
-            out.close();
+            cout << " COUNT ======= "<<endl;
             break;
 
         }
@@ -734,20 +761,26 @@ void Peer::handleReceivedMessage(Message m, string id)
             rd.unFlatten(data);
             string name=rd.getImageName();
             string user = currentOnlineUsers[m.getOwnerIP()].first;
+
             char c;
             ifstream in;
+
 
             //POP UP
             string request = "User "+user+" has requested access to "+name+ ", do you accept?\n";
             string title = "Image Request Received";
             mbox_image_name=name;
+            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PATH HI "<<name<<endl;
+
             mbox_request = request;
             mbox_title = title;
             mbox_mt=mt;
             mbox_id=id;
             mbox_port=m.getOwnerPort();
             mbox_ip=m.getOwnerIP();
-            emit firstWindow();
+            emit countWindow();
+
+            sendImage(name,mbox_ip,mbox_port,5);
             cout<<"EMITED\n";
 
             break;
@@ -767,7 +800,7 @@ void Peer::handleReceivedMessage(Message m, string id)
               mbox_id=id;
               mbox_port=m.getOwnerPort();
               mbox_ip=m.getOwnerIP();
-            emit firstWindow();
+            emit countWindow();
 
          }
     case DenyRequest:
@@ -778,10 +811,19 @@ void Peer::handleReceivedMessage(Message m, string id)
 
            break;
         }
-//         case ViewsReply:
-//         {
-//            break;
-//         }
+        case ViewsReply:
+        {
+            ViewsReplyData vd;
+            vd.unFlatten(data);
+            string name=vd.getName();
+            string user=currentOnlineUsers[m.getOwnerIP()].first;
+            int count = vd.getCount();
+            ImageData id;
+            string path="Shared/"+user+"_"+name;
+            id.setPath(path);
+            id.setCount(count);
+           break;
+        }
 
         //to be added to Service and removed from here
         /*
@@ -807,6 +849,11 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
     }
 }
+int Peer::getMBoxCount()
+{
+    return mbox_count;
+}
+
 string Peer::getMBoxTitle()
 {
     return mbox_title;
@@ -869,7 +916,8 @@ void Peer::addImage(string name, string path)
 
 void Peer::sendImage(string name, string IP, int port,int count)
 {
-    ImageData id(name,"Images/"+name,count);
+    ImageData id(name,"Images/",count);
+
     Message tst(ImageReply, string(myHostname), myPort, IP, port);
     tst.setData(id);
     tst.Flatten();
@@ -889,6 +937,13 @@ void Peer::requestImage(string name, string user)
     msg.Flatten();
     execute(msg);
 
+}
+string Peer::viewImage(string path)
+{
+    ImageData tmp;
+    tmp.setPath(path);
+
+    return tmp.view(path);
 }
 
 Peer::~Peer(){

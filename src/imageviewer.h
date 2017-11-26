@@ -17,11 +17,17 @@ class imageviewer : public QMainWindow
 public:
     explicit imageviewer(QWidget *parent, std::string path, bool mine, Peer &p);
     ~imageviewer();
+    void closeEvent(QCloseEvent *event);
+
+private slots:
 
 private:
     Ui::imageviewer *ui;
     QTableView *view;
     QStandardItemModel *model;
+    bool mine;
+    string current, image_name;
+
 };
 
 #endif // IMAGEVIEWER_H

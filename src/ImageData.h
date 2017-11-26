@@ -1,17 +1,16 @@
 #include "Data.h"
-#include "encryptjpeg.h"
-#include "aesencrypt.h"
 #include <fstream>
 #include <string>
 #include <cstring>
 #include <iostream>
 using namespace std;
+
 #ifndef IMAGEDATA_H
 #define IMAGEDATA_H
 class ImageData : public Data
 {
     private:
-        string image, name, path;
+        string image, name, path,cur;
     public:
         ImageData();
         ImageData(string name, string path, int count);
@@ -25,10 +24,11 @@ class ImageData : public Data
         string getImage();
         string getName();
         string getPath();
+        void embeddInDefault();
+        string view(string path);
 
-
-        bool Flatten();
-        bool unFlatten(string s);
+         bool Flatten();
+         bool unFlatten(string s);
 
         ~ImageData();
 };

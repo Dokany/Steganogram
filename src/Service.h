@@ -20,7 +20,7 @@ class Service
         UDPSocket * udpSocket_client;
         UDPSocket * udpSocket_server;
 
-        thread main_send, main_receive, main_listen;
+        thread main_send, main_receive, main_listen, main_refresh, pingThread;
         int myPort;
         char * myHostname;
 
@@ -61,7 +61,7 @@ class Service
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
-
+	void terminateUsers();
     public:
         Service();
         Service(char * _listen_hostname, int _listen_port);

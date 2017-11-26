@@ -68,7 +68,7 @@ class Peer : public QObject
         void receiveMain();
 
         string mbox_request, mbox_title, mbox_image_name, mbox_ip, mbox_id;
-        int mbox_port;
+        int mbox_port,mbox_count;
         MessageType mbox_mt;
         bool mbox_bool;
 
@@ -76,6 +76,7 @@ class Peer : public QObject
     signals:
         void terminateProgram();
         void firstWindow();
+        void countWindow();
     public:
         Peer();
         Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
@@ -93,7 +94,7 @@ class Peer : public QObject
         string getMBoxTitle();
         string getMBoxRequest();
         void setMBoxBool(bool);
-        bool login(string username, string password);
+        int login(string username, string password);
         void execute(Message msg);
         void requestImage(string name, string user);
         void logOff();
@@ -101,7 +102,9 @@ class Peer : public QObject
         void addViews(int count, string image, string user);
         void halt();
         void processReply();
-
+        void setMBoxCount(int);
+        int getMBoxCount();
+        string viewImage(string path);
         ~Peer();
 };
 #endif // PEER_H
