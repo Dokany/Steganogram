@@ -8,7 +8,7 @@ ImageData::ImageData(string name, string path, int count)
 
     this->path = path;
     this->name = name;
-    string image_extension = path + name + ".JPEG";
+    string image_extension = path + name;
 
     if(name.find(seperator)!=-1)
     {
@@ -52,7 +52,7 @@ ImageData::ImageData(string name, string path, int count)
 void ImageData::setCount(int count)
 {
 
-    string image_extension = path  + name + ".JPEG";
+    string image_extension = path  + name;
 
     string image_count = path + ".count.txt";
 
@@ -98,7 +98,7 @@ int ImageData::getCount()
 {
     int count;
 
-    string image_extension = path + name + ".JPEG";
+    string image_extension = path + name ;
 
     string image_count = path  + ".count.txt";
 
@@ -220,7 +220,7 @@ bool ImageData::unFlatten(string s)
 void ImageData::embeddInDefault(){
 
 
-    string image_extension = path + name + ".JPEG";
+    string image_extension = path + name ;
 
     string command = "steghide embed -ef " + image_extension + " -cf default.JPEG "+ " -sf  " + image_extension + " -p 0 -f";
 

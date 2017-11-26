@@ -36,6 +36,8 @@ void ImageList:: viewImageListWidget()
 void ImageList::on_imageListWidget_itemClicked(QListWidgetItem *item)
 {
     // Requesting Image from User
+    cout<<"~~~~~~~~~~~~~~~~~~~~~~~~ Request IMAGE "<<( item->text()).toStdString();
+
     p->requestImage((item->text()).toStdString(), username);
 }
 

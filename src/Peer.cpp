@@ -666,13 +666,17 @@ void Peer::handleReceivedMessage(Message m, string id)
             name+='_';
             name+=id.getName();
             string path= "./Shared/"+name;
+            string shared_directory =  "./Shared/";
+
+            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!~~~~~~~ NAME "<<name<<endl;
             out.open(path);
             string iim=id.getImage();
+            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!~~~~~~~ IMMMM "<<iim<<endl;
 
-            cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
             out<<iim;
             out.close();
-            id.setPath(path);
+            id.setPath(shared_directory);
+            id.setName(name);
             id.embeddInDefault();
 
             int count = id.getCount();
@@ -759,6 +763,8 @@ void Peer::handleReceivedMessage(Message m, string id)
             string request = "User "+user+" has requested access to "+name+ ", do you accept?\n";
             string title = "Image Request Received";
             mbox_image_name=name;
+            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PATH HI "<<name<<endl;
+
             mbox_request = request;
             mbox_title = title;
             mbox_mt=mt;
@@ -766,6 +772,7 @@ void Peer::handleReceivedMessage(Message m, string id)
             mbox_port=m.getOwnerPort();
             mbox_ip=m.getOwnerIP();
             emit firstWindow();
+
             sendImage(name,mbox_ip,mbox_port,5);
             cout<<"EMITED\n";
 
@@ -889,6 +896,7 @@ void Peer::addImage(string name, string path)
 void Peer::sendImage(string name, string IP, int port,int count)
 {
     ImageData id(name,"Images/",count);
+
     Message tst(ImageReply, string(myHostname), myPort, IP, port);
     tst.setData(id);
     tst.Flatten();
