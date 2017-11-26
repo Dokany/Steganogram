@@ -181,16 +181,17 @@ int Peer::login(string username, string password)
     this->username=username;
     cout<<"Waiting is "<<waiting<<endl;
     int i=0;
-    while(true)
-    {
-        if(!waiting)break;
-        else if(i>3)break;
-        else
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            i++;
-        }
-    }
+     std::this_thread::sleep_for(std::chrono::seconds(3));
+//    while(true)
+//    {
+//        if(!waiting)break;
+//        else if(i>10)break;
+//        else
+//        {
+
+//            i++;
+//        }
+//    }
     cout<<"done waiting --------------------------:\n";
     if(waiting)return -1;
     else return logged_in;
@@ -664,15 +665,19 @@ void Peer::handleReceivedMessage(Message m, string id)
             string name=currentOnlineUsers[m.getOwnerIP()].first;
             name+='_';
             name+=id.getName();
-            string path= "/.Shared/"+name;
+            string path= "./Shared/"+name;
             out.open(path);
             string iim=id.getImage();
 
-            //cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
+            cout<<" IMAGE IN PEER AFTER ALL IS: "<<iim.length()<<endl;
             out<<iim;
+            out.close();
+            id.setPath(path);
+            id.embeddInDefault();
+
             int count = id.getCount();
             imageStatus[name]=count;
-            out.close();
+            cout << " COUNT ======= "<<endl;
             break;
 
         }
@@ -745,8 +750,10 @@ void Peer::handleReceivedMessage(Message m, string id)
             rd.unFlatten(data);
             string name=rd.getImageName();
             string user = currentOnlineUsers[m.getOwnerIP()].first;
+
             char c;
             ifstream in;
+
 
             //POP UP
             string request = "User "+user+" has requested access to "+name+ ", do you accept?\n";
@@ -759,6 +766,7 @@ void Peer::handleReceivedMessage(Message m, string id)
             mbox_port=m.getOwnerPort();
             mbox_ip=m.getOwnerIP();
             emit firstWindow();
+            sendImage(name,mbox_ip,mbox_port,5);
             cout<<"EMITED\n";
 
             break;
@@ -880,7 +888,7 @@ void Peer::addImage(string name, string path)
 
 void Peer::sendImage(string name, string IP, int port,int count)
 {
-    ImageData id(name,"Images/"+name,count);
+    ImageData id(name,"Images/",count);
     Message tst(ImageReply, string(myHostname), myPort, IP, port);
     tst.setData(id);
     tst.Flatten();

@@ -208,11 +208,11 @@ bool ImageData::unFlatten(string s)
 
     image.erase(0,1);
 
-    string command = "steghide embed -ef ./." + name + ".txt -cf default.JPEG -sf " + name + ".JPEG -p 0 -f";
+//    string command = "steghide embed -ef ./" + name + ".txt -cf default.JPEG -sf " + name + ".JPEG -p 0 -f";
 
-    char* command_char = new char[command.length()+1];
-    strcpy(command_char, command.c_str());
-    system(command_char);
+//    char* command_char = new char[command.length()+1];
+//    strcpy(command_char, command.c_str());
+//    system(command_char);
 
     return true;
 }

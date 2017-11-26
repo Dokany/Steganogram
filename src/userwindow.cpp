@@ -16,10 +16,11 @@
 #include <QFileDialog>
 #include <QWidget>
 
-UserWindow::UserWindow(QWidget *parent, Peer* p) :
+UserWindow::UserWindow(QWidget *parent, Peer* p, std::string username) :
     QMainWindow(parent),
     ui(new Ui::UserWindow)
 {
+    this->username = username;
     cout << "Beginning: Constructing\n";
     this->p = p;
     connect(this->p,SIGNAL(firstWindow()),SLOT(handleMBox()));
@@ -263,7 +264,7 @@ void UserWindow::updateOnlineWidget()
 
     for(it=list_1.begin();it!=list_1.end();++it)
     {
-        ui->usersWidget->addItem((it->second.first).c_str());
+           if (it->second.first != username) ui->usersWidget->addItem((it->second.first).c_str());
     }
 }
 
@@ -279,8 +280,9 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
     imageOptions->setWindowTitle("Image Options");
     imageOptions->setText("Select Image Options");
 
-    QAbstractButton* pButtonView = imageOptions->addButton(tr("View"), QMessageBox::YesRole);
-    QAbstractButton* pButtonDelete =imageOptions->addButton(tr("Delete"), QMessageBox::NoRole);
+    QAbstractButton* pButtonView = imageOptions->addButton(tr("View"), QMessageBox::ActionRole);
+    QAbstractButton* pButtonDelete =imageOptions->addButton(tr("Delete"), QMessageBox::ActionRole);
+    QAbstractButton* pButtonCancel =imageOptions->addButton(tr("Cancel"), QMessageBox::NoRole);
 
     imageOptions->exec();
 

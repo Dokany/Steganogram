@@ -20,7 +20,7 @@ class UserWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit UserWindow(QWidget *parent, Peer *p);
+    explicit UserWindow(QWidget *parent, Peer *p, std::string username);
     UserWindow();
     UserWindow(const UserWindow& uw);
     ~UserWindow();
@@ -50,6 +50,7 @@ private:
     Ui::UserWindow *ui;
     imageviewer *iv;
     ImageList *il;
+    std::string username;
 
 //    QStringListModel *model;
 //    QStringListModel *model_2;
