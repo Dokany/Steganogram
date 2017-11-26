@@ -11,7 +11,7 @@ void logs()
 {
 	pe.login("yasmin","heyy");
 }
-int main()
+int main2()
 {
 	
 	

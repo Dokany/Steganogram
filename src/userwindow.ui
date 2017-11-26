@@ -160,13 +160,13 @@ width:20px;
     <property name="title">
      <string>Online Users </string>
     </property>
-    <widget class="QListView" name="usersList">
+    <widget class="QListWidget" name="usersWidget">
      <property name="geometry">
       <rect>
-       <x>5</x>
+       <x>10</x>
        <y>30</y>
-       <width>211</width>
-       <height>381</height>
+       <width>201</width>
+       <height>341</height>
       </rect>
      </property>
     </widget>
@@ -197,7 +197,30 @@ width:20px;
      <string>Upload</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="RequestsButton">
+   <widget class="QGroupBox" name="myImages">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>401</width>
+      <height>191</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>My Images</string>
+    </property>
+    <widget class="QListWidget" name="imageWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>31</y>
+       <width>381</width>
+       <height>151</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="RefreshButton">
     <property name="geometry">
      <rect>
       <x>420</x>
@@ -207,28 +230,28 @@ width:20px;
      </rect>
     </property>
     <property name="text">
-     <string>Requests</string>
+     <string>Refresh</string>
     </property>
    </widget>
-   <widget class="QGroupBox" name="myImages">
+   <widget class="QGroupBox" name="sharedList">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>230</y>
       <width>401</width>
-      <height>381</height>
+      <height>191</height>
      </rect>
     </property>
     <property name="title">
-     <string>My Images</string>
+     <string>Shared Images</string>
     </property>
-    <widget class="QListView" name="myImagesList">
+    <widget class="QListWidget" name="sharedWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>30</y>
+       <y>31</y>
        <width>381</width>
-       <height>351</height>
+       <height>151</height>
       </rect>
      </property>
     </widget>

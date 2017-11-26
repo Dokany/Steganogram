@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-11-12T01:25:56
+# Project created by QtCreator 2017-11-26T11:01:00
 #
 #-------------------------------------------------
 
@@ -11,79 +11,82 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Steganogram
 TEMPLATE = app
 
-# The following define makes your compiler emit warnings if you use
-# any feature of Qt which has been marked as deprecated (the exact warnings
-# depend on your compiler). Please consult the documentation of the
-# deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
 
-# You can also make your code fail to compile if you use deprecated APIs.
-# In order to do so, uncomment the following line.
-# You can also select to disable deprecated APIs only up to a certain version of Qt.
-#DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
-
-
-SOURCES += \
-        main.cpp \
-        loginwindow.cpp \
-    userwindow.cpp \
-    AckData.cpp \
-    AuthData.cpp \
-    Client.cpp \
-    Data.cpp \
-    ImageData.cpp \
-    ImageListData.cpp \
-    ImageRequestData.cpp \
-    Message.cpp \
-    PackGen.cpp \
-    Peer.cpp \
-    PingData.cpp \
-    Server.cpp \
-    Service.cpp \
-    StatusData.cpp \
-    UDPSocket.cpp \
-    imageviewer.cpp \
-    accessjpeg.cpp \
-    aesencrypt.cpp \
-    encryptjpeg.cpp \
+SOURCES += main.cpp\
+        mainwindow.cpp \
     ViewsRequestData.cpp \
-    ViewsReplyData.cpp
+    ViewsReplyData.cpp \
+    userwindow.cpp \
+    UDPSocket.cpp \
+    StatusData.cpp \
+    Service.cpp \
+    Server.cpp \
+    PingData.cpp \
+    Peer.cpp \
+    PackGen.cpp \
+    Message.cpp \
+    main_service.cpp \
+    main_peer.cpp \
+    loginwindow.cpp \
+    imageviewer.cpp \
+    ImageRequestData.cpp \
+    ImageListData.cpp \
+    imagelist.cpp \
+    ImageData.cpp \
+    Data.cpp \
+    Client.cpp \
+    AuthData.cpp \
+    AckData.cpp
 
-HEADERS += \
-        loginwindow.h \
-    userwindow.h \
-    AckData.h \
-    AuthData.h \
-    Client.h \
-    Data.h \
-    ImageData.h \
-    ImageListData.h \
-    ImageRequestData.h \
-    Message.h \
-    PackGen.h \
-    Peer.h \
-    PingData.h \
-    Server.h \
-    Service.h \
-    StatusData.h \
-    UDPSocket.h \
-    imageviewer.h \
-    accessjpeg.h \
-    aesencrypt.h \
-    encryptjpeg.h \
+HEADERS  += mainwindow.h \
+    ViewsRequestData.h \
     ViewsReplyData.h \
-    ViewsRequestData.h
+    userwindow.h \
+    UDPSocket.h \
+    StatusData.h \
+    Service.h \
+    Server.h \
+    PingData.h \
+    Peer.h \
+    PackGen.h \
+    Message.h \
+    loginwindow.h \
+    imageviewer.h \
+    ImageRequestData.h \
+    ImageListData.h \
+    imagelist.h \
+    ImageData.h \
+    Data.h \
+    Client.h \
+    AuthData.h \
+    AckData.h
 
-FORMS += \
-        loginwindow.ui \
+FORMS    += mainwindow.ui \
     userwindow.ui \
-    imageviewer.ui
+    loginwindow.ui \
+    imageviewer.ui \
+    imagelist.ui
 
 DISTFILES += \
-    cat.jpg \
-    dog_b.jpg \
-    dog_s.jpg \
-    dogg.jpg \
-    auth.txt \
+    ImageRequestData.h.gch \
+    ImageListData.h.gch \
+    Data.h.gch \
+    AuthData.h.gch \
+    test2 \
+    outt \
+    oo \
+    o \
+    Steganogram.pro.user \
+    outt.txt \
+    output.txt.save.1 \
+    output.txt.save \
+    new_t.txt \
+    name \
+    log123.txt \
+    log2.txt \
+    log.txt \
+    IMG_OUT.txt \
+    dog.txt \
     dog_b.txt \
-    dog.txt
+    compilation \
+    auth.txt

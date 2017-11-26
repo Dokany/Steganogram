@@ -1,6 +1,7 @@
 #include "Message.h"
 #include "UDPSocket.h"
 #include "PackGen.h"
+
 #include <thread>
 #include <mutex>
 #include <vector>
@@ -11,20 +12,19 @@
 #include <condition_variable>
 #include <QtCore>
 #include <QtGui>
-#include <QMessageBox>
-#include <QMainWindow>
+#include <QObject>
 
 #ifndef PEER_H
 #define PEER_H
-
 enum MessageStatusType{sending, sent, lost};
-class Peer
+class Peer : public QObject
 {
+    Q_OBJECT
     private:
         UDPSocket * udpSocket_client;
         UDPSocket * udpSocket_server;
 
-        thread main_send, main_receive, main_listen, main_pinger;
+        std::thread main_send, main_receive, main_listen, main_pinger;
         int myPort, servicePort;
         char * myHostname, *serviceHostname ;
         string username;
@@ -66,13 +66,21 @@ class Peer
         void receiveHandler(string message_id, int timeout);
         void handleReceivedMessage(Message m, string id);
         void receiveMain();
-        QMainWindow *mw;
 
+        string mbox_request, mbox_title, mbox_image_name, mbox_ip, mbox_id;
+        int mbox_port;
+        MessageType mbox_mt;
+        bool mbox_bool;
+
+
+    signals:
+        void terminateProgram();
+        void firstWindow();
     public:
         Peer();
         Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port);
-        //Peer(const Peer& other);
-        //Peer& operator=(const Peer& other);
+        Peer(const Peer& other);
+        Peer& operator=(const Peer& other);
         std::map<string,pair<string,int> > getStatus();
         vector<pair<string,int> > getCurrentImageViewers(string);
         void start();
@@ -82,14 +90,17 @@ class Peer
         std::set<string> getMyImages();
         std::set<string> getUserImages(string username);
         void setLocalImages(std::set<string>);
-        bool login(string username, string password);
+        string getMBoxTitle();
+        string getMBoxRequest();
+        void setMBoxBool(bool);
+        int login(string username, string password);
         void execute(Message msg);
-        void copyWindow(QMainWindow *q);
         void requestImage(string name, string user);
+        void logOff();
         void requestViews(string name, string user);
         void addViews(int count, string image, string user);
-        void logOff();
         void halt();
+        void processReply();
 
         ~Peer();
 };

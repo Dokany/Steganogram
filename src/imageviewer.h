@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QTableView>
 #include <QStandardItemModel>
-#include<string>
+#include <string>
 #include "Peer.h"
 namespace Ui {
 class imageviewer;

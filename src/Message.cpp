@@ -155,17 +155,17 @@ bool Message::setData(Data &d)
 		}
         case ViewsRequest:
         {
-            ViewsRequestData &pd = dynamic_cast<ViewsRequestData&>(d);
-            pd.Flatten();
-            data = pd.getFlattenedData();
-            break;
+                ViewsRequestData &pd = dynamic_cast<ViewsRequestData&>(d);
+                pd.Flatten();
+                data = pd.getFlattenedData();
+                break;
         }
         case ViewsReply:
         {
             ViewsReplyData &pd = dynamic_cast<ViewsReplyData&>(d);
             pd.Flatten();
-            data = pd.getFlattenedData();
-            break;
+             data = pd.getFlattenedData();
+             break;
         }
 		default:
 		{

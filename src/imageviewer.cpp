@@ -2,7 +2,6 @@
 #include "ui_imageviewer.h"
 #include <QPixmap>
 #include <QStandardItem>
-#include "Peer.h"
 imageviewer::imageviewer(QWidget *parent, std::string path, bool mine, Peer &p) :
     QMainWindow(parent),
     ui(new Ui::imageviewer)
@@ -15,8 +14,10 @@ imageviewer::imageviewer(QWidget *parent, std::string path, bool mine, Peer &p) 
     ui->setupUi(this);
     QPixmap pix(path.c_str());
 
-    ui->image->setPixmap(pix.scaled(700,700,Qt::KeepAspectRatio));
+    //ui->image->setPixmap(pix.scaled(700,700,Qt::KeepAspectRatio));
+    ui->image->setPixmap(pix.scaled(ui->image->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     ui->image->setScaledContents(true);
+    //ui->image->setSizePolicy( QSizePolicy::Ignored, QSizePolicy::Ignored );
 
     view = new QTableView;
     model = new QStandardItemModel;
@@ -31,7 +32,6 @@ imageviewer::imageviewer(QWidget *parent, std::string path, bool mine, Peer &p) 
         int i=0;
         for(pair<std::string,int> p:ret)
         {
-
             QStandardItem *first = new QStandardItem(p.first.c_str());
             model->setItem(i,0,first);
             QStandardItem *second = new QStandardItem(p.second);
@@ -46,6 +46,8 @@ imageviewer::imageviewer(QWidget *parent, std::string path, bool mine, Peer &p) 
          model->setHorizontalHeaderItem(0, new QStandardItem(QString("Count")));
 
     }
+
+    this->setAttribute( Qt::WA_QuitOnClose, false );
 
 }
 

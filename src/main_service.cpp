@@ -7,7 +7,7 @@
 #include <chrono>
 using namespace std;
 
-int main()
+int main3()
 {
 	char* server_hostname = "10.7.57.200";
 	Service serv(server_hostname, 4444);

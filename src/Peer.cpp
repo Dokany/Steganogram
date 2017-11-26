@@ -12,8 +12,7 @@
 #include <mutex>
 #include <algorithm>
 #include <chrono>
-using namespace std;
-
+Peer::Peer(){}
 Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, int service_port)
 {
     this->udpSocket_server = new UDPSocket();
@@ -34,8 +33,8 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
     waiting =true;
     listening = true;
 
-    main_listen = thread(&Peer::listen,this);
-    main_pinger = thread(&Peer::ping,this);
+    main_listen = std::thread(&Peer::listen,this);
+    main_pinger = std::thread(&Peer::ping,this);
 
     sendMain();
     receiveMain();
@@ -47,16 +46,18 @@ Peer::Peer(char * _listen_hostname, int _listen_port, char* service_hostname, in
 }
 void Peer::logOff()
 {
-   logged_in=false;
+    //halt();
+    logged_in=false;
 }
-/*Peer(const Peer& other)
+/*
+Peer::Peer(const Peer& other)
 {
     udpSocket_client=other.udpSocket_client;
     udpSocket_server=other.udpSocket_server;
 
-    main_listen = other.main_listen;
-    main_pinger = other.main_pinger;
-    main_receive=other.main_receive;
+   // main_listen = other.main_listen;
+  //  main_pinger = other.main_pinger;
+  //  main_receive=other.main_receive;
 
     myPort = other.myPort;
     myHostname = other.myHostname;
@@ -65,16 +66,16 @@ void Peer::logOff()
 
     username = other.username;
 
-    mutex_1 = other.mutex_1;
-    mutex_2 = other.mutex_2;
-    mutex_3 = other.mutex_3;
+    //mutex_1 = other.mutex_1;
+    //mutex_2 = other.mutex_2;
+    //mutex_3 = other.mutex_3;
 
-    cond = other.cond;
-    cond1 = other.cond1;
-    listening = other.listening;
+   // cond = other.cond;
+   // cond1 = other.cond1;
+    //listening = other.listening;
 
-    processes_r = other.processes_r;
-    processes_s = other.processes_s;
+   // processes_r = other.processes_r;
+   // processes_s = other.processes_s;
 
     requests = other.requests;
     requests_process = other.requests_process;
@@ -93,14 +94,14 @@ void Peer::logOff()
     pendingImageOwners = other.pendingImageOwners;
 }
 
-Peer& operator=(const Peer& other)
+Peer& Peer::operator=(const Peer& other)
 {
     udpSocket_client=other.udpSocket_client;
     udpSocket_server=other.udpSocket_server;
 
-    main_listen = other.main_listen;
-    main_pinger = other.main_pinger;
-    main_receive=other.main_receive;
+   // main_listen = other.main_listen;
+    //main_pinger = other.main_pinger;
+   // main_receive=other.main_receive;
 
     myPort = other.myPort;
     myHostname = other.myHostname;
@@ -109,16 +110,16 @@ Peer& operator=(const Peer& other)
 
     username = other.username;
 
-    mutex_1 = other.mutex_1;
-    mutex_2 = other.mutex_2;
-    mutex_3 = other.mutex_3;
+    //mutex_1 = other.mutex_1;
+    //mutex_2 = other.mutex_2;
+    //mutex_3 = other.mutex_3;
 
-    cond = other.cond;
-    cond1 = other.cond1;
-    listening = other.listening;
+    //cond = other.cond;
+    //cond1 = other.cond1;
+   // listening = other.listening;
 
-    processes_r = other.processes_r;
-    processes_s = other.processes_s;
+   // processes_r = other.processes_r;
+    //processes_s = other.processes_s;
 
     requests = other.requests;
     requests_process = other.requests_process;
@@ -143,7 +144,7 @@ std::set<string> Peer::getMyImages()
     return localImages;
 }
 
-std::set<string>  Peer::getUserImages(string username)
+std::set<string> Peer::getUserImages(string username)
 {
     std::set<string> ret;
     Message req(ImageListRequest,string(myHostname),myPort, nameToAddress[username].first, nameToAddress[username].second);
@@ -155,7 +156,6 @@ std::set<string>  Peer::getUserImages(string username)
     ret= currentImageListReply;
     currentImageListReply.clear();
     return ret;
-
 }
 
 void Peer::setLocalImages(std::set<string> arg)
@@ -163,7 +163,7 @@ void Peer::setLocalImages(std::set<string> arg)
     localImages=arg;
 }
 
-bool Peer::login(string username, string password)
+int Peer::login(string username, string password)
 {
     Message m(Auth, string(myHostname), myPort, string(serviceHostname), servicePort);
     AuthData ad;
@@ -175,12 +175,25 @@ bool Peer::login(string username, string password)
     }
     m.setData(ad);
     m.Flatten();
-    execute(m);
     waiting = true;
-    //cout<<"Waiting is "<<waiting<<endl;
-    while(waiting);
-
-    return logged_in;
+    cout<<"BEGIN EXECUTION\n";
+    execute(m);
+    this->username=username;
+    cout<<"Waiting is "<<waiting<<endl;
+    int i=0;
+    while(true)
+    {
+        if(!waiting)break;
+        else if(i>3)break;
+        else
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            i++;
+        }
+    }
+    cout<<"done waiting --------------------------:\n";
+    if(waiting)return -1;
+    else return logged_in;
 }
 
 
@@ -188,16 +201,22 @@ void Peer::ping()
 {
     while(listening)
     {
-std::this_thread::sleep_for(std::chrono::seconds(15));
-        cout<<"pinging\n";
-        string myIP(myHostname);
-        string targetIP(serviceHostname);
-        Message ping(Ping, myIP, myPort, targetIP, servicePort);
-        PingData pd(username);
-        ping.setData(pd);
-        ping.Flatten();
-        execute(ping);
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        if(logged_in)
+        {
 
+            cout<<"pinging\n";
+            string myIP(myHostname);
+            string targetIP(serviceHostname);
+            Message ping(Ping, myIP, myPort, targetIP, servicePort);
+            PingData pd(username);
+            ping.setData(pd);
+            ping.Flatten();
+
+            char *hn = new char[targetIP.length() + 1];
+            memcpy(hn, targetIP.c_str(),targetIP.length() + 1);
+            sendWithoutWaiting(ping,servicePort, hn);
+        }
     }
 }
 
@@ -225,7 +244,10 @@ void Peer::sendMain()
                     Message msg = requests.front();
                     string idd = msg.getID()+msg.getOwnerIP()+to_string(time(NULL));
 
-                    if(!logged_in)auth_id = idd;
+                    if(!logged_in){
+                        cout<<"set AUTH ID\n";
+                              auth_id = idd;
+                    }
                     msg.setMessageID(idd);
                     msg.Flatten();
                     char *IP = new char[msg.getTargetIP().length() + 1];
@@ -286,7 +308,7 @@ void Peer::sendHandler(Message msg, int port, char *hostname, int timeout)
                 {
                     cout<<cstr[i];
                 }cout<<endl;*/
-                while((udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname))<0);
+                udpSocket_client->writeToSocket(cstr, temp.length()+1, port, hostname);
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
             messageSentStatus[msg_id]=sending;
@@ -309,9 +331,9 @@ void Peer::halt()
     cond.notify_all();
     cond1.notify_all();
 
-    for (thread& t : processes_s) t.join();
+    for (std::thread& t : processes_s) t.join();
 
-    for (thread& t : processes_r) t.join();
+    for (std::thread& t : processes_r) t.join();
 
     //main_send.join();
     //main_receive.join();
@@ -423,6 +445,8 @@ void Peer::receiveMain()
 
 void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
 {
+    string idd = m.getID()+m.getOwnerIP()+to_string(time(NULL));
+    m.setMessageID(idd);
     PackGen pg(max_size);
 
     vector<Message> v = pg.fragment(m);
@@ -432,7 +456,7 @@ void Peer::sendWithoutWaiting(Message m, int port, char *hostname)
         string temp = mm.getFlattenedMessage();
         char *msg = new char[temp.length() + 1];
         strcpy(msg, temp.c_str());
-        while((udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname)<0));
+        udpSocket_client->writeToSocket(msg, temp.length() + 1, port, hostname);
     }
 }
 
@@ -482,7 +506,7 @@ void Peer::receiveHandler(string message_id, int timeout)
         //cout<<"defraggedMessage data size: "<<size<<endl;
         //send ack
         MessageType mmt = defraggedMessage.getType();
-        if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate)
+        if(mmt!=Ack && mmt!=NegAck && mmt!=Terminate && mmt!=ImageRequest && mmt!=StatusReply && mmt!=ImageListRequest && mmt!=ViewsRequest)
         {
 
             Message ackMessage(Ack, myIP,myPort, targetIP, targetPort);
@@ -500,6 +524,93 @@ void Peer::receiveHandler(string message_id, int timeout)
         handleReceivedMessage(defraggedMessage, message_id);
     }
     cout<<"exiting receive handler\n";
+}
+void Peer::processReply()
+{
+    bool accept=mbox_bool;
+
+    MessageType mt=mbox_mt;
+    string name = mbox_image_name, id=mbox_id, ip=mbox_ip;
+    int port=mbox_port;
+    switch(mt)
+    {
+        case ImageRequest:
+        {
+            if(accept)
+            {
+                string path = "Images/"+name;
+
+                ImageData id(name,path,5);
+
+                Message reply(ImageReply, string(myHostname), myPort, ip,port);
+
+
+                reply.setData(id);
+
+                reply.Flatten();
+
+                execute(reply);
+
+            }
+            else
+            {
+                Message neg(NegAck, myHostname,myPort, ip,port);
+                AckData nd(_NegAck, id);
+                neg.setData(nd);
+                neg.Flatten();
+                char *hn = new char[ip.length() + 1];
+                memcpy(hn, ip.c_str(),ip.length() + 1);
+                sendWithoutWaiting(neg, port,hn);
+            }
+            break;
+        }
+        case ImageListRequest:
+        {
+            if(accept)
+            {
+                Message reply(ImageListReply, string(myHostname), myPort, ip,port);
+                ImageListData ild;
+                for(std::set<string>::iterator it=localImages.begin();it!=localImages.end();++it)
+                {
+                    ild.addImage(*it);
+                }
+                reply.setData(ild);
+                reply.Flatten();
+                execute(reply);
+            }
+            else
+            {
+                Message reply(DenyRequest, string(myHostname), myPort, ip,port);
+                reply.Flatten();
+                execute(reply);
+            }
+            break;
+        }
+        case ViewsRequest:
+        {
+            if(accept)
+            {
+                ViewsReplyData id;
+                id.setCount(5);
+                id.setName(name);
+                Message reply(ImageReply, string(myHostname), myPort, ip,port);
+                reply.setData(id);
+                reply.Flatten();
+                execute(reply);
+            }
+            else
+            {
+                Message neg(NegAck, myHostname,myPort, ip,port);
+                AckData nd(_NegAck, id);
+                neg.setData(nd);
+                neg.Flatten();
+                char *hn = new char[ip.length() + 1];
+                memcpy(hn, ip.c_str(),ip.length() + 1);
+                sendWithoutWaiting(neg, port,hn);
+            }
+            break;
+        }
+    }
 }
 
 void Peer::handleReceivedMessage(Message m, string id)
@@ -519,6 +630,7 @@ void Peer::handleReceivedMessage(Message m, string id)
             {
                 cout<<"Log is successful\n";
                 logged_in = true;
+
                 waiting = false;
             }
             else if(pendingImageOwners.find(ad.getMessageID())!= pendingImageOwners.end())//he got the image
@@ -566,7 +678,8 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
         case StatusReply:
         {
-            if(!logged_in)return;
+
+//            if(!logged_in)return;
             StatusData sd;
             sd.unFlatten(data);
             cout<<"Received online users: \n";
@@ -614,25 +727,15 @@ void Peer::handleReceivedMessage(Message m, string id)
             string request = "User "+user+" has requested access to you image list, do you accept?\n";
             string title = "Image List Request Received";
 
-            auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
-            if(accept==QMessageBox::Yes)
-            {
-                Message reply(ImageListReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
-                ImageListData ild;
-                for(std::set<string>::iterator it=localImages.begin();it!=localImages.end();++it)
-                {
-                    ild.addImage(*it);
-                }
-                reply.setData(ild);
-                reply.Flatten();
-                execute(reply);
-            }
-            else
-            {
-                Message reply(DenyRequest, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
-                reply.Flatten();
-                execute(reply);
-            }
+
+            mbox_request = request;
+            mbox_title = title;
+            mbox_mt=mt;
+            mbox_id=id;
+            mbox_port=m.getOwnerPort();
+            mbox_ip=m.getOwnerIP();
+            emit firstWindow();
+
             break;
          }
 
@@ -648,62 +751,37 @@ void Peer::handleReceivedMessage(Message m, string id)
             //POP UP
             string request = "User "+user+" has requested access to "+name+ ", do you accept?\n";
             string title = "Image Request Received";
-
-            auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
-            if(accept==QMessageBox::Yes)
-            {
-                ImageData id(name,"Images/"+name,5);
-                Message reply(ImageReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
-                reply.setData(id);
-                reply.Flatten();
-                execute(reply);
-            }
-            else
-            {
-                Message neg(NegAck, myHostname,myPort,m.getOwnerIP(), m.getOwnerPort());
-                AckData nd(_NegAck, id);
-                neg.setData(nd);
-                neg.Flatten();
-                char *hn = new char[m.getOwnerIP().length() + 1];
-                memcpy(hn, m.getOwnerIP().c_str(),m.getOwnerIP().length() + 1);
-                sendWithoutWaiting(neg, m.getOwnerPort(),hn);
-            }
+            mbox_image_name=name;
+            mbox_request = request;
+            mbox_title = title;
+            mbox_mt=mt;
+            mbox_id=id;
+            mbox_port=m.getOwnerPort();
+            mbox_ip=m.getOwnerIP();
+            emit firstWindow();
+            cout<<"EMITED\n";
 
             break;
          }
-        case ViewsRequest:
-        {
+         case ViewsRequest:
+         {
             ViewsRequestData rd;
             rd.unFlatten(data);
             string name=rd.getName();
             string user = currentOnlineUsers[m.getOwnerIP()].first;
             string request = "User "+user+" has requested more views for "+name+ ", do you accept?\n";
             string title = "Image Request Received";
+            mbox_request = request;
+            mbox_title = title;
+              mbox_mt=mt;
+              mbox_image_name=name;
+              mbox_id=id;
+              mbox_port=m.getOwnerPort();
+              mbox_ip=m.getOwnerIP();
+            emit firstWindow();
 
-            auto accept = QMessageBox::question(mw,title.c_str(),request.c_str(),QMessageBox::Yes|QMessageBox::No);
-            if(accept==QMessageBox::Yes)
-            {
-                ViewsReplyData id;
-                id.setCount(5);
-                id.setName(name);
-                Message reply(ImageReply, string(myHostname), myPort, m.getOwnerIP(),m.getOwnerPort() );
-                reply.setData(id);
-                reply.Flatten();
-                execute(reply);
-            }
-            else
-            {
-                Message neg(NegAck, myHostname,myPort,m.getOwnerIP(), m.getOwnerPort());
-                AckData nd(_NegAck, id);
-                neg.setData(nd);
-                neg.Flatten();
-                char *hn = new char[m.getOwnerIP().length() + 1];
-                memcpy(hn, m.getOwnerIP().c_str(),m.getOwnerIP().length() + 1);
-                sendWithoutWaiting(neg, m.getOwnerPort(),hn);
-            }
-           break;
-        }
-        case DenyRequest:
+         }
+    case DenyRequest:
         {
             //POP UP WINDOW DENIED!
             waiting=false;
@@ -724,19 +802,53 @@ void Peer::handleReceivedMessage(Message m, string id)
         case Ping:
 
         */
+        case Terminate:
+        {
+            logged_in=false;
+            cout<<"before terminate emit\n";
+            emit terminateProgram();
+
+            break;
+        }
         default:
         {
             if(!logged_in)return;
             perror("Unknown type received\n");
+            break;
         }
     }
 }
-
-void Peer::copyWindow(QMainWindow *q)
+string Peer::getMBoxTitle()
 {
-    mw=q;
+    return mbox_title;
 }
 
+string Peer::getMBoxRequest()
+{
+    return mbox_request;
+}
+void Peer::setMBoxBool(bool b)
+{
+    mbox_bool=b;
+}
+
+void Peer::requestViews(string name, string user)
+{
+   string targetIP = nameToAddress[user].first;
+   int targetPort = nameToAddress[user].second;
+   Message msg(ViewsReply,string(myHostname), myPort, targetIP, targetPort);
+   ViewsRequestData vrd;
+   vrd.setName(name);
+   msg.setData(vrd);
+   msg.Flatten();
+   execute(msg);
+}
+void Peer::addViews(int count, string image, string user)
+{
+    string path = user +'_'+ image;
+    ImageData id(image, ".Shared/"+path, count);
+     imageStatus[path]=count;
+}
 int Peer::checkImage(string name, string ip)
 {
     string img_name = currentOnlineUsers[ip].first+'_'+name;
@@ -790,28 +902,6 @@ void Peer::requestImage(string name, string user)
 
 }
 
-void Peer::requestViews(string name, string user)
-{
-    string targetIP = nameToAddress[user].first;
-    int targetPort = nameToAddress[user].second;
-    Message msg(ViewsReply,string(myHostname), myPort, targetIP, targetPort);
-    ViewsRequestData vrd;
-    vrd.setName(name);
-    msg.setData(vrd);
-    msg.Flatten();
-    execute(msg);
-
-}
-
-void Peer::addViews(int count, string image, string user)
-{
-    string path = user +'_'+ image;
-    ImageData id(image, ".Shared/"+path, count);
-     imageStatus[path]=count;
-}
-
-
-
 Peer::~Peer(){
 
     std::map<string,int>::iterator it;
@@ -824,14 +914,4 @@ Peer::~Peer(){
         id.setPath(it->first);
         id.setCount(it->second);
     }
-    // listening = false;
-
-    // cond.notify_all();
-    // cond1.notify_all();
-
-    // for (thread& t : processes) t.join();
-
-    // main_listen.join();
-    // main_send.join();
-    // main_receive.join();
 }

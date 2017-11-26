@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>imageviewer</class>
- <widget class="QMainWindow" name="imageviewer">
+ <class>ImageList</class>
+ <widget class="QDialog" name="ImageList">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
-background-color:#EEEEDA;
+background-color:#253147;
 }
 
 QMenuBar{
@@ -39,7 +42,7 @@ background-color:#00aba9;
 }
 
 QGroupBox {
-    background-color: #FFB200;
+    background-color: #253147;
 }
 
 QTableWidget{
@@ -81,17 +84,17 @@ color:#fff;
 }
 
 QMenu{
-background-color:#FFB200;
+background-color:#253147;
 }
 QStatusBar{
-background-color:#FFB200;
+background-color:#253147;
 color:#fff;
 }
 
 QPushButton{
 border-style:solid;
 
-background-color:#3d3d3d;
+background-color:#e3a21a;
 color:#fff;
 border-radius:7px;
 }
@@ -108,7 +111,7 @@ background-color: qlineargradient(spread:pad, x1:0.517, y1:0, x2:0.517, y2:1, st
 
 
 QTabWidget::tab{
-background-color:#FFB200;
+background-color:#253147;
 }
 
 QLineEdit{
@@ -131,46 +134,66 @@ background-color:#2d89ef;
 width:20px;
 }</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="image">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>521</width>
-      <height>531</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>TextLabel</string>
-    </property>
-   </widget>
-   <widget class="QTableView" name="countList">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>530</x>
-      <y>0</y>
-      <width>261</width>
-      <height>531</height>
-     </rect>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
+  <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>39</height>
+     <x>290</x>
+     <y>20</y>
+     <width>81</width>
+     <height>241</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QListWidget" name="imageListWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>261</width>
+     <height>281</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ImageList</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ImageList</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
