@@ -162,15 +162,6 @@ void Peer::setLocalImages(std::set<string> arg)
 {
     localImages=arg;
 }
-bool Peer::getMBoxMine()
-{
-    return mbox_mine;
-}
-
-string Peer::getMBoxPath()
-{
-    return mbox_path;
-}
 
 int Peer::login(string username, string password)
 {
@@ -554,12 +545,10 @@ void Peer::processReply()
             if(accept)
             {
                 string path = "Images/";
-                cout<<"NAME IN irproceesreply "<<name<<endl;
                 ImageData id(name,path,mbox_count);
-
+                id.setName(name);
                 Message reply(ImageReply, string(myHostname), myPort, ip,port);
                 cout<<"SET COUNT "<<mbox_count<<endl;
-                currentImageViewers.erase(name);
                 currentImageViewers[name].push_back(make_pair(currentOnlineUsers[ip].first,mbox_count));
 
                 reply.setData(id);
@@ -605,19 +594,13 @@ void Peer::processReply()
         }
         case ViewsRequest:
         {
-
             if(accept)
             {
-                string path = "Images/";
-                ImageData id(name,path,mbox_count);
-                Message reply(ViewsReply, string(myHostname), myPort, ip,port);
-                cout<<"SET COUNT "<<mbox_count<<endl;
-                currentImageViewers.erase(name);
+                ViewsReplyData id;
+                id.setCount(mbox_count);
+                id.setName(name);
                 currentImageViewers[name].push_back(make_pair(currentOnlineUsers[ip].first,mbox_count));
-                for(pair<string,int> p:currentImageViewers[name])
-                {
-                    cout<<"User: "<<p.first<<" has "<<p.second<<endl;
-                }
+                Message reply(ViewsReply, string(myHostname), myPort, ip,port);
                 reply.setData(id);
                 reply.Flatten();
                 execute(reply);
@@ -701,10 +684,11 @@ void Peer::handleReceivedMessage(Message m, string id)
             id.setPath(shared_directory);
             id.setName(name);
             id.embeddInDefault();
-
+            cout<< "EMBEDEDED IN DEFAULT DONENENE"<<endl;
             int count = id.getCount();
+
             imageStatus[name]=count;
-            cout << " COUNT ======= "<<count<<endl;
+            cout << " COUNT ======= "<<endl;
             break;
 
         }
@@ -752,7 +736,6 @@ void Peer::handleReceivedMessage(Message m, string id)
        // TO BE IMPLEMENTED AFTER STEGANOGRAPHY
          case ImageListRequest:
          {
-            cout<<"GOT AN IMAGE LIST REQUEST---\n";
 
             //POP UP WINDOW
 
@@ -768,7 +751,6 @@ void Peer::handleReceivedMessage(Message m, string id)
             mbox_port=m.getOwnerPort();
             mbox_ip=m.getOwnerIP();
             emit firstWindow();
-            cout<<"done emitiing listrequest\n";
 
             break;
          }
@@ -789,8 +771,7 @@ void Peer::handleReceivedMessage(Message m, string id)
             string title = "Image Request Received";
             mbox_image_name=name;
             cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ PATH HI "<<name<<endl;
-            mbox_mine = true;
-            mbox_path = "Images/";
+
             mbox_request = request;
             mbox_title = title;
             mbox_mt=mt;
@@ -812,8 +793,6 @@ void Peer::handleReceivedMessage(Message m, string id)
             string user = currentOnlineUsers[m.getOwnerIP()].first;
             string request = "User "+user+" has requested more views for "+name+ ", do you accept?\n";
             string title = "Image Request Received";
-            mbox_mine = true;
-            mbox_path = "Images/";
             mbox_request = request;
             mbox_title = title;
               mbox_mt=mt;
@@ -834,33 +813,16 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
         case ViewsReply:
         {
-            if(!logged_in)return;
+            ViewsReplyData vd;
+            vd.unFlatten(data);
+            string name=vd.getName();
+            string user=currentOnlineUsers[m.getOwnerIP()].first;
+            int count = vd.getCount();
             ImageData id;
-            id.unFlatten(data);
-            ofstream out;
-            string name=currentOnlineUsers[m.getOwnerIP()].first;
-            name+='_';
-            name+=id.getName();
-            string path= "Shared/"+name;
-            string shared_directory =  "Shared/";
-
-            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!~~~~~~~ NAME "<<name<<endl;
-            remove(path.c_str());
-            out.open(path);
-            string iim=id.getImage();
-            cout<<"~~~~~~~~~~~~~~~~~~~~~~~~~~!!!!!~~~~~~~ IMMMM "<<iim<<endl;
-
-            out<<iim;
-            out.close();
-            id.setPath(shared_directory);
-            id.setName(name);
-            id.embeddInDefault();
-
-            int count = id.getCount();
-            imageStatus[name]=count;
-            cout << " COUNT ======= "<<count<<endl;
-            break;
-
+            string path="Shared/"+user+"_"+name;
+            id.setPath(path);
+            id.setCount(count);
+           break;
         }
 
         //to be added to Service and removed from here
@@ -887,11 +849,6 @@ void Peer::handleReceivedMessage(Message m, string id)
         }
     }
 }
-string Peer::getMBoxName()
-{
-    return mbox_image_name;
-}
-
 int Peer::getMBoxCount()
 {
     return mbox_count;
@@ -918,11 +875,8 @@ void Peer::requestViews(string name, string user)
    Message msg(ViewsRequest,string(myHostname), myPort, targetIP, targetPort);
    ViewsRequestData vrd;
    vrd.setName(name);
-
    msg.setData(vrd);
-   //cout<<"aftersetdata"<<endl;
    msg.Flatten();
-  // cout<<"afterflattenrequest"<<endl;
    execute(msg);
 }
 void Peer::addViews(int count, string image, string user)
@@ -990,10 +944,6 @@ string Peer::viewImage(string path)
     tmp.setPath(path);
 
     return tmp.view(path);
-}
-int Peer::getImageStatus(string name)
-{
-    return imageStatus[name];
 }
 
 Peer::~Peer(){
