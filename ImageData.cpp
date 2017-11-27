@@ -21,6 +21,7 @@ ImageData::ImageData(string name, string path, int count)
     of.open(count_file);
     of<< count <<endl;
     of.close();
+    cout<<"IMAGE EXTENSION\t"<<image_extension<<endl;
 
     // Use steganography to hide count in image
     string command = "steghide embed -ef " + count_file + " -cf " + image_extension + " -p 0 -f";
@@ -144,7 +145,7 @@ int ImageData::getCount()
     strcpy(command_char3, command.c_str());
     system(command_char3);
     if(remove(image_count.c_str())!=0)cout<<"Couldn't delete file\n";
-    cout<< "GET COUNT SUCCESSFUL "<<endl;
+
     return count;
 }
 string ImageData::view(string path)

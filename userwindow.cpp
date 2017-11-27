@@ -20,6 +20,7 @@ UserWindow::UserWindow(QWidget *parent, Peer* p, std::string username) :
     QMainWindow(parent),
     ui(new Ui::UserWindow)
 {
+    initialized=false;
     this->username = username;
     cout << "Beginning: Constructing\n";
     this->p = p;
@@ -30,8 +31,8 @@ UserWindow::UserWindow(QWidget *parent, Peer* p, std::string username) :
     ui->setupUi(this);
     cout<<"Setup UI\n";
     QPixmap pix("logo.png");
-    ui->LogoLabel->setPixmap(pix.scaled(75,75,Qt::KeepAspectRatio));
-
+    ui->LogoLabel->setPixmap(pix.scaled(50,50,Qt::KeepAspectRatio));
+    iv = new imageviewer(this, std::string(""), true, *p);
     viewImageWidget();
     viewSharedWidget();
     //working=true;
@@ -55,7 +56,9 @@ void UserWindow::handleMBox(){
     {
         p->setMBoxBool(false);
     }
-    p->processReply();
+     p->processReply();
+
+
 
 }
 void UserWindow::countMBox()
@@ -64,7 +67,7 @@ void UserWindow::countMBox()
     string title = p->getMBoxTitle();
     QMessageBox msgBox(this);
 
-    msgBox.setText(title.c_str());
+    msgBox.setText(request.c_str());
     QAbstractButton* pButtonGrant5 = msgBox.addButton(tr("Grant 5 views!"), QMessageBox::YesRole);
     QAbstractButton* pButtonGrant10 = msgBox.addButton(tr("Grant 10 views!"), QMessageBox::YesRole);
     QAbstractButton* pButtonGrant15 = msgBox.addButton(tr("Grant 15 views!"), QMessageBox::YesRole);
@@ -91,6 +94,8 @@ void UserWindow::countMBox()
         p->setMBoxBool(false);
     }
     p->processReply();
+//    if(initialized)
+//        iv->refresh(p->getMBoxMine(), p->getMBoxName(), p->getMBoxPath(), *p);
 }
 
 void UserWindow::terminateBox()
@@ -216,8 +221,18 @@ void UserWindow::on_imageWidget_itemClicked(QListWidgetItem *item)
 
     if (imageOptions->clickedButton()==pButtonView) {
         // Opening ImageViewer Pop-up Window
-         iv = new imageviewer(this, std::string("Images/"+s), true, *p);
+        initialized=true;
+        //std::this_thread::sleep_for(std::chrono::seconds(5));
+        cout<<"NAME IN SHEDEED "<<s<<endl;
+        vector<pair<std::string,int> > ret = p->getCurrentImageViewers(s);
+        for(pair<std::string,int> pp:ret)
+        {
+            cout<<" count in shedddeeeeeed "<<pp.second<<endl;
+
+        }
+         iv ->refresh(true, s,std::string("Images/"+s), *p);
         iv->show();
+
     }
     else if (imageOptions->clickedButton()==pButtonDelete)
     {
@@ -329,7 +344,13 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
         // Opening ImageViewer Pop-up Window
         string path;
         path=p->viewImage(std::string("Shared/"+s));
-        iv = new imageviewer(this, path, false, *p);
+       // std::this_thread::sleep_for(std::chrono::seconds(5));
+         initialized=true;
+         reverse(s.begin(),s.end());
+        string ext=s.substr(0,s.find('.')+1);
+        reverse(ext.begin(),ext.end());
+       reverse(s.begin(),s.end());
+        iv->refresh(false, s,std::string("Shared/"+s+ext), *p);
         iv->show();
     }
     else if (imageOptions->clickedButton()==pButtonDelete)
@@ -351,7 +372,9 @@ void UserWindow::on_sharedWidget_itemClicked(QListWidgetItem *item)
      else if (imageOptions->clickedButton()==pButtonRequest)
     {
         string user=s.substr(0,s.find('_'));
-        string name = s.substr(user.length());
+        int ss=s.find('_')+2;
+        string name = s.substr(ss);
+        cout<<"...........EXTRACTING"<<user<<" "<<name<<endl;
         p->requestViews(name,user);
     }
 }
