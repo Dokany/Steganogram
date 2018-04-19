@@ -1,9 +1,9 @@
 # Steganogram
 Image sharing application build using UNIX sockets and UDP to implement Remote Invocation Middleware (RMI) and grant its users capabilties to control their images' sharing privileges.
 
-![alt text]( "Image Options")
+![alt text](Steganogram/screenshots/Request_Image_List.png "Image Options")
 
-For class diagrams and detailed documentation, [click here]().
+For class diagrams and detailed documentation, [click here](Steganogram/documentation.pdf).
 
 ### Contributors (Group D)
 - Aley Baracat
